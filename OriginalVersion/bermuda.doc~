@@ -1,0 +1,45 @@
+
+Bermuda Triangle Ship Rescue               (C) 1995 Nicole Greiber
+
+This program is a game. You must find ships that are hidden in the
+playing area. To get more details, please refer to the online help
+(simply press F1).
+
+This package contains the following files:
+   bermuda.exe       The program
+   bermuda.hlp       The online help
+   bermuda.doc       This file
+   *.wav             Several sound files. If you don't have MMPM/2 installed
+                     or if you don't want sound, you can delete the .wav 
+							files.
+                     You can also replace the files by your own sounds,
+                     as long as they get the same names. If one of
+                     the sound files is missing, all sound will be disabled.
+
+
+The program is released as FREE!ware. If you really like the game
+very much, I'd be happy to receive a nice picture postcard of 
+your hometown.
+
+You can contact me
+via eMail (InterNet) : greiber@wrcs2.urz.uni-wuppertal.de
+
+or via SnailMail:
+Nicole Greiber
+Brueningstr. 6
+42119 Wuppertal
+GERMANY
+
+
+Have fun!
+
+Nicole
+
+========================================================
+Version history for Bermuda Triangle Ship Rescue:
+
+Version 1.0, released on 27.2.95
+   - Initial release
+
+
+

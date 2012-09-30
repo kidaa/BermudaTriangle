@@ -1,0 +1,5 @@
+tgraph.cpp(267): Warning! W014: (col 1) no reference to symbol 'rectl' 
+tgraph.cpp(267): Note! N392: (col 1) '_RECTL rectl' in 'void * syscall TGraphWinProc( unsigned long, unsigned long, void *, void * )' defined in: tgraph.cpp(97) (col 11) 
+tgraph.cpp(267): Warning! W014: (col 1) no reference to symbol 'RealPaint' 
+tgraph.cpp(267): Note! N392: (col 1) 'unsigned long RealPaint' in 'void * syscall TGraphWinProc( unsigned long, unsigned long, void *, void * )' defined in: tgraph.cpp(101) (col 10) 
+tgraph.cpp(410): Warning! W389: (col 49) integral value may be truncated during assignment or initialization 

@@ -1,0 +1,4 @@
+bermuda.cpp(375): Warning! W014: (col 9) no reference to symbol 'rectl' 
+bermuda.cpp(375): Note! N392: (col 9) '_RECTL rectl' in 'void * syscall WndProc( unsigned long, unsigned long, void *, void * )' defined in: bermuda.cpp(362) (col 19) 
+bermuda.cpp(635): Warning! W014: (col 1) no reference to symbol 'IntroSoundPlayed' 
+bermuda.cpp(635): Note! N392: (col 1) 'unsigned long IntroSoundPlayed' in 'void * syscall WndProc( unsigned long, unsigned long, void *, void * )' defined in: bermuda.cpp(258) (col 17) 

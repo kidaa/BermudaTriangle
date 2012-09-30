@@ -1,0 +1,453 @@
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+// bitmap definitions
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+// the SND_FOUND? variables must be kept in the following order with subsequent nr.s
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:userdoc.
+:title.Help for Bermuda Triangle
+:docprof toc=12.
+
+ 
+
+:h1 id=6000  res=6000 .How to Play
+:i1 id=6000 .How to Play
+:p.
+:lines align=center.
+Bermuda Triangle
+Version 1.0
+(C) 1995 :link reftype=hd res=6501 .Nicole Greiber:elink.
+N&amp.O Design
+:p.
+This program is FREE!ware
+:elines.
+:p.
+The game "Bermuda Triangle Ship Rescue" is a single-player game. You find
+yourself in the Bermuda Triangle. This area is feared by all seafarers
+because here many ships disappear for unknown reasons. Recently four
+ships have disappeared. You are the captain of a Ship Rescue Enterprise
+in search of the lost ships. With your equipment you can move to
+any point in the area where the ships may be lost, and you can scan the
+water around this point for the wrecks. 
+.br
+:p.
+:hp2.The Gameboard:ehp2.
+:p.
+The gameboard is a rectangular area (in a future release it will
+really be triangular) that consists of 20 x 9 fields :artwork runin
+name='field.bmp'. . From each of these fields 
+you can scan eight directions (horizontal,
+vertical and diagonal). You will then be informed of the number of wrecks
+visible from there. This number is shown in that field. 
+But be cautious: When two ships are lying one behind the other, the second
+one will be hidden behind the first one, so your scanner will only see one ship.
+:p.
+:hp2.Where is my mousepointer?:ehp2.
+:p.
+When the mousepointer is on a field of the gameboard, this field is
+marked by a grey square&colon.
+:p.
+:artwork align=center name='s1.bmp'.
+:p.
+Every action will then be performed on this field.
+:p.
+:hp2.How to make a move:ehp2.
+:p.
+A move means a scan on the gameboard.
+To make a move, just click with mouse button 1 (normally this is the left
+mouse button) on the field you want to scan. 
+The lines that lead from this point will be scanned. The result (i. e. the
+number of ships the scanning beam has hit) will be displayed
+at this position&colon.
+:p.
+:artwork align=center name='s2.bmp'.
+:p.
+When you have MMPM installed and you&apos.ve enabled sound in the 
+:link reftype=hd refid=6010 .Game / Settings...:elink. dialog
+window, you will also hear how many ships have been discovered.
+This is counted as one move. The number of moves is displayed above the
+gameboard. There you also find the number of ships that are still lost.
+When you are in the lucky situation that a ship is located where you
+did a scan, this does not count as a move.
+:p.
+When two ships are hidden in a line, you will only be able to see
+one! So the gameboard might look like this&colon.
+:p.
+:artwork align=center name='s7.bmp'.
+:p.
+From the field with the number one only the lower left ship is visible,
+the other ship is hidden behind it.
+:p.
+:hp2.How to find a ship:ehp2.
+
+:dl.
+:dt.
+:artwork runin name='ship.bmp'.
+:dd.
+When you find a ship by clicking on it, this sign is shown. Again, when 
+sound is enabled, you will hear a flourish.
+
+:edl.
+:p.
+:hp2.How do I know which lines will be scanned?:ehp2.
+:p.
+When you are not sure which lines will be scanned, just move the mouse 
+to the desired
+field and press the spacebar. The
+lines to be scanned will be emphasized&colon.
+:p.
+:artwork align=center name='s8.bmp'.
+:p.
+When you move the mouse away from the current field, the lines will disappear.
+:p.
+:hp2.How to mark a field:ehp2.
+:p.
+Sometimes you will notice that a certain field can&apos.t contain
+a ship (for example any fields visible from a "null" field).
+You can then
+mark this field by clicking mouse button 2 (normally this is the right
+mouse button). A little box :artwork runin name='marksmall.bmp'.will appear 
+to indicate that
+you marked this field. If you want to remove a mark, just click on the
+field again with the right mouse button. 
+These markers are just for your convenience and don&apos.t influence
+the game in any way.
+A field showing a number cannot be
+marked,
+but a marked field can be scanned. When you want to
+mark several fields in a straight line, just drag with the right mouse 
+button from 
+the first to the last field you want to mark. 
+While dragging, a line shows up that indicates which fields will be marked
+after you released the mouse button.
+Already marked fields are not affected.
+:p.
+:artwork align=center name='s3.bmp'.
+:p.
+:hp2.How to hide a scan-number:ehp2.
+:p.
+When you have analyzed a number you received from a scan, you can hide
+this number by clicking on it with the left mouse button. It will turn into an
+empty circle&colon.
+:p.
+:artwork align=center name='s4.bmp'.
+:p.
+When you click again, the number will reappear.
+
+:p.
+Related topics&colon.
+:sl compact.
+:li. :link reftype=hd refid=6010 .Game Menu:elink.
+:li. :link reftype=hd refid=6020 .Help Menu:elink.
+:li. :link reftype=hd refid=6023 .Keys and Buttons help:elink.
+:li. :link reftype=hd refid=6501 .About the Author:elink.
+:li. :link reftype=hd refid=6503 .Conditions for Use:elink.
+:esl.
+
+
+ 
+
+:h1 id=6010  res=6010 .Game Menu
+:i1 id=6010 .Game Menu
+:p.
+The Game Menu contains the following menu entries&colon.
+
+:dl break=all tsize=5.
+
+:dt.:hp2.New:ehp2.
+:i2 refid=6010 .New
+:dd.Starts a new game. The current game is discarded.
+
+:dt.:hp2.Settings ...:ehp2.
+:i2 refid=6010 .Settings ...
+:dd.Opens a window where you can select the style of the gameboard.
+You can determine which lines will be drawn on the gameboard: 
+
+:dl break=all tsize=5.
+:dt.Show diagonal lines
+:dd.Only the diagonal lines will be displayed on the gameboard.
+:dt.Show straight lines
+:dd.Only the horizontal and vertical lines will be displayed on the gameboard.
+:dt.Show all lines
+:dd.The diagonal, horizontal and vertical lines will be displayed.
+:edl.
+:p.
+If you have MMPM/2 installed, you can select the Sound checkbox to
+enable or disable the game&apos.s sounds.
+
+:dt.:hp2.Highscores ...:ehp2.
+:i2 refid=6010 .Highscores ...
+:dd.Opens a window that displays the highscores. The highscores are kept
+in the file "scores.dat" in the directory where you started the game from.
+Of course I encrypted the data a little. This algorithm is very primitive,
+but I regard it to be efficient enough (and I don&apos.t expect anybody to spend
+much time on decrypting a highscore file). If you are interested in the
+encryption method, you can contact
+:link reftype=hd refid=6501 .me:elink.!
+:edl.
+
+:h1 id=6020  res=6020 .Help Menu
+:i1 id=6020 .Help Menu
+:p.
+The help menu consists of the following entries:
+:dl break=all tsize=3.
+
+:dt.:hp2.Help index:ehp2.
+:i2 refid=6020 .Help index
+:dd.Here you can get an index of all help entries.
+
+:dt.:hp2.General help:ehp2.
+:i2 refid=6020 .General help
+:dd.This option shows general information about Bermuda Triangle Ship Rescue.
+:dt.:hp2.Using Help:ehp2.
+:i2 refid=6020 .Using Help
+:dd.A system help page is displayed which explains how to use the help.
+:dt.:hp2.Keys and Buttons Help:ehp2.
+:i2 refid=6020 .Keys and Buttons Help
+:dd.Here you find a short reference to all keystrokes and mouse clicks.
+:dt.:hp2.Product information:ehp2.
+:i2 refid=6020 .Product information
+:dd.Selecting this option will open a window that contains some information
+about Bermuda Triangle Ship Rescue and 
+:link reftype=hd refid=6501 .its author:elink..
+:edl.
+
+:h1 id=6501  res=6501 .About the Author
+:i1 id=6501 .About the Author
+:p.
+The game "Bermuda Triangle Ship Rescue" has been written by Nicole Greiber.
+If you like this game or dislike it, if you have questions or problems or
+if you find any bugs (I left some in on purpose because I like to
+get mail ;-) , just drop me a line.
+Or, even better, send me a nice picture postcard of your hometown.
+.br
+You can contact me via eMail (InterNet)&colon. 
+:p.
+greiber@wrcs2.urz.uni-wuppertal.de
+:p.
+or via Snail Mail&colon.
+:p.
+Nicole Greiber
+.br
+BrÅningstr. 6
+.br
+42119 Wuppertal
+.br
+Germany
+:p.
+:hp2.Credits:ehp2.
+:p.
+I want to thank all people who helped me with this game, especially:
+
+
+:dl break=all tsize=3.
+:dt.Olaf
+:dd.for his patience, his consistent criticism and his unbelievable ability
+to discover bugs
+:dt.Christian Franz
+:dd.for his Macintosh game "Galaxis", where the idea for this game was taken from
+:dt.William Scott Hiles
+:dd.for his source code and his explanations on how to play sounds 
+:dt.IBM
+:dd.for the wonderful OS/2
+:edl.
+
+:h1 id=6503  res=6503 .Conditions for Use
+:i1 id=6503 .Conditions for Use
+:p.
+You should be aware that this program is distributed
+:hp8.WITHOUT ANY WARRANTY:ehp8. of any kind; not even with the implied
+warranty of merchantability or fitness for a particular purpose.
+.br
+Please copy and distribute the program as much as you like!
+You are allowed to do so as long as you
+don&apos.t charge more than a nominal fee for handling etc. and as
+long as all copyright notices are kept within the program and the
+documentation.
+
+
+ 
+
+:h1 id=6023  res=6023 .Keys and Buttons help
+:i1 id=6023 .Keys and Buttons help
+:p.
+The following keystrokes and mouse actions can be used in
+Bermuda Triangle Ship Rescue:
+
+
+:dl break=all tsize=3.
+
+:dt.:hp2.F1:ehp2.
+:dd.With this key you can get context-sensitive help on the game, 
+the menu entries and the dialogs.
+
+:dt.:hp2.Spacebar:ehp2.
+:dd.When the mousepointer is on a field of the gameboard, pressing the
+spacebar emphasizes all lines that will be scanned from this field.
+When you move the mouse pointer away from that field, the lines will
+disappear.
+
+:dt.:hp2.Left mouse button:ehp2.
+:dd.When the mousepointer is on a field that has not yet been scanned
+and you click the left mousebutton, this field will be scanned. When
+the field has already been scanned, clicking the left mousebutton will
+turn the scanning number into an empty circle and vice versa.
+
+:dt.:hp2.Right mouse button (clicking):ehp2.
+:dd.lets you set or remove a marker box.
+
+:dt.:hp2.Right mouse button (dragging):ehp2.
+:dd.lets you mark several fields. While you are dragging, a line appears
+that indicates which fields will be marked. Already marked fields are
+not affected, and you cannot remove marks in this way.
+
+:edl.
+
+
+ 
+
+
+:euserdoc.

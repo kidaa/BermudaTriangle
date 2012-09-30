@@ -1,0 +1,10 @@
+///////////////////////////////////////////////////////////////
+//  Sound.cpp
+//  Sound class (uses mmsound.cpp)
+//
+//
+
+BOOL Sound::fMMPMInitialized = FALSE;
+BOOL Sound::fSoundPossible;
+BOOL Sound::fSoundWanted;
+

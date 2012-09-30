@@ -1,0 +1,1033 @@
+WATCOM Linker Version 10.6
+Copyright by WATCOM International Corp. 1985, 1996. All rights reserved.
+Created on:       96/07/02 22:22:15
+Executable Image: bermuda.exe
+creating an OS/2 32-bit executable
+
+
+                        +------------+
+                        |   Groups   |
+                        +------------+
+
+Group                           Address              Size
+=====                           =======              ====
+
+DGROUP                          0002:00000000        00013060
+
+
+
+                        +--------------+
+                        |   Segments   |
+                        +--------------+
+
+Segment                Class          Group          Address         Size
+=======                =====          =====          =======         ====
+
+BEGTEXT                CODE                          0001:00000000   00000007
+_TEXT                  CODE                          0001:00000010   0000fb9e
+_NULL                  BEGDATA        DGROUP         0002:00000000   00000004
+_AFTERNULL             BEGDATA        DGROUP         0002:00000004   00000000
+CONST                  DATA           DGROUP         0002:00000004   00000d28
+CONST2                 DATA           DGROUP         0002:00000d2c   000003d4
+_DATA                  DATA           DGROUP         0002:00001100   00001598
+XIB                    DATA           DGROUP         0002:00002698   00000000
+XI                     DATA           DGROUP         0002:00002698   00000066
+XIE                    DATA           DGROUP         0002:000026fe   00000000
+YIB                    DATA           DGROUP         0002:000026fe   00000000
+YI                     DATA           DGROUP         0002:000026fe   0000001e
+YIE                    DATA           DGROUP         0002:0000271c   00000000
+TIB                    DATA           DGROUP         0002:0000271c   00000000
+TI                     DATA           DGROUP         0002:0000271c   00000000
+TIE                    DATA           DGROUP         0002:0000271c   00000000
+DATA                   DATA           DGROUP         0002:0000271c   00000000
+DATA32                 DATA           DGROUP         0002:0000271c   0000011c
+CONST32                CONST          DGROUP         0002:00002838   00000000
+_BSS                   BSS            DGROUP         0002:00002838   0000081c
+BSS32                  BSS            DGROUP         0002:00003054   00000000
+STACK                  STACK          DGROUP         0002:00003060   00010000
+
+
+                        +----------------+
+                        |   Memory Map   |
+                        +----------------+
+
+* = unreferenced symbol
++ = symbol only referenced locally
+
+Address        Symbol
+=======        ======
+
+Module: sound.obj(E:\arbeit\progr\_sound\sound.cpp)
+0002:00002838+ long unsigned near MMPMModuleLoaded
+0002:0000283c+ long unsigned near MMIOModuleLoaded
+0002:00002840+ char near szFailBuff[]
+0002:00002944+ long unsigned near hDLLModuleMci
+0002:00002948+ long unsigned near hDLLModuleMmio
+0002:0000294c+ long unsigned (near * near pfnMciSendCommand)( short unsigned, short unsigned, long unsigned, void near *, short unsigned )
+0002:00002950+ long unsigned (near * near pfnMmioOpen)( char near *, _MMIOINFO near *, long unsigned )
+0001:00000010+ near mmaudioheader::mmaudioheader()
+0001:00000037+ mem_wav near & near mem_wav::operator ()( char )
+0001:00000066+ near mem_wav::mem_wav( char const near * const, long unsigned near *, char )
+0001:00000236+ near mem_wav::~mem_wav()
+0001:00000262+ void near mem_wav::play()
+0001:00000367+ long near LoadMMPMSupport()
+0001:000004b1+ long near FreeMMPMSupport()
+0001:00000500* void near PlaySound( mem_wav near *, long unsigned )
+0001:0000058a+ void near mmio_error( long unsigned, char near * near * )
+0001:00000661  near Sound::Sound( char const near * const, char, void (near *)())
+0001:000006ef  near Sound::~Sound()
+0001:00000730  void near Sound::Play()
+0001:0000078c  Sound near & near Sound::operator ()( char )
+0002:00001100  long unsigned near Sound::fSoundWanted
+0002:00002954+ long unsigned (near * near pfnMmioGetHeader)( long unsigned, void near *, long, long near *, long unsigned, long unsigned )
+0002:00002958+ long (near * near pfnMmioRead)( long unsigned, char near *, long )
+0002:0000295c+ short unsigned (near * near pfnMmioClose)( long unsigned, short unsigned )
+0002:00002960+ long unsigned near Sound::fMMPMInitialized
+0002:00002964+ long unsigned near Sound::fSoundPossible
+Module: profile.obj(E:\arbeit\progr\_standard\profile.cpp)
+0002:00001104+ PrfKeyList near PROFILE::PrfKeys
+0001:000007c4  near PROFILE::PROFILE( long unsigned, char near *, char near *, char near * )
+0001:00000889* near PROFILE::~PROFILE()
+0001:000008c0  long unsigned near PROFILE::WriteWindowData( long unsigned )
+0001:000009b3  long unsigned near PROFILE::ReadWindowData( long unsigned )
+0001:00000b8b  long unsigned near PROFILE::Open()
+0001:00000c2e  long unsigned near PROFILE::Close()
+0001:00000c52  long unsigned near PROFILE::ReadData( char near *, char near *, void near *, long unsigned near * )
+0001:00000cb9  long unsigned near PROFILE::WriteData( char near *, char near *, void near *, long unsigned )
+0002:00000d2c* long unsigned const near PROFILE::MaxVersionLen
+Module: bermuda.obj(E:\arbeit\progr\bermuda_triangle\bermuda.cpp)
+0002:00002972  long unsigned near hab
+0002:00002976+ long unsigned near hmq
+0002:0000297a  long unsigned near hwndFrame
+0002:0000297e  long unsigned near hwndMain
+0002:00002982+ long unsigned near hwndHelp
+0002:00002986+ _HELPINIT near HelpInit
+0002:000029b2+ PROFILE near * near Profile
+0002:000029b6  long unsigned near hevWaitAfterScan
+0002:000029ba  long unsigned near hevHiScoreWin
+0002:000029be  long unsigned near hevWaitAfterSound
+0002:000029c2  long unsigned near hevWaitSoundReady
+0002:000029c6+ char near Score
+0002:000029c7  GLOBALS near * near pg
+0002:000029cb  GRAPHBOARD near GBoard
+0002:00002a00* GRAPHICS_PARAMETERS near graphparms
+0001:00000d08  main
+0001:0000128d+ void near * near WndProc( long unsigned, long unsigned, void near *, void near * )
+0001:00001d5f+ void near * near HighScoreDlgProc( long unsigned, long unsigned, void near *, void near * )
+0001:00001e15+ void near * near ProdInfoDlgProc( long unsigned, long unsigned, void near *, void near * )
+0001:00001e5a+ void near * near GameSettingsDlgProc( long unsigned, long unsigned, void near *, void near * )
+0001:00001ff5+ void near * near ShowHighDlgProc( long unsigned, long unsigned, void near *, void near * )
+0001:000020a6+ void near ReadProfile( long unsigned )
+0001:0000211b+ void near WriteProfile( long unsigned )
+0002:0000112a+ long unsigned near fHideSquare
+0002:0000112e+ __g174uPrfKeys near PrfKeys
+0002:00001136+ char near * near pszAppName
+0002:0000113a+ char near * near pszIniName
+0002:0000113e+ char near * near pszVersion
+Module: game.obj(E:\arbeit\progr\bermuda_triangle\game.cpp)
+0001:000021bc  near BOARD::BOARD( char, char )
+0001:000022c4  void near BOARD::NewGame()
+0001:000023d5  int near BOARD::Scan( char, char )
+0002:00001144  int unsigned near next_rand
+Module: info.obj(E:\arbeit\progr\bermuda_triangle\info.cpp)
+0001:00002b44+ near INFO::HISCORE::HISCORE()
+0001:00002600  void near INFO::InsertHigh( char near *, char )
+0001:00002692  void near INFO::ResetHigh()
+0001:000026d0  void near INFO::SaveHigh( long unsigned const )
+0001:000028cd  long unsigned near INFO::LoadHigh()
+0001:00002abf* long unsigned near FileExists( char near * )
+0002:00002a0c  INFO near InfoData
+Module: pmgame.obj(E:\arbeit\progr\bermuda_triangle\pmgame.cpp)
+0001:00004740  wcprintf
+0002:00002b48+ long unsigned near hdcGlob
+0002:00002b4c+ long unsigned near hdcBufferGlob
+0002:00002b50  long unsigned near hpsGlob
+0002:00002b54  long unsigned near hpsBufferGlob
+0002:00002b58+ long unsigned near hbmGlob
+0002:00002b5c+ long near cColorPlanes
+0002:00002b60+ long near cColorBitCount
+0001:00002b6c  long unsigned near GRAPHBOARD::OneLine( long unsigned const, _POINTL, _POINTL, int, int )
+0001:00002df2  near GRAPHBOARD::GRAPHBOARD( char, char )
+0001:00002e2b  void near GRAPHBOARD::SetPMBoardValues( short const, short const )
+0001:00002eb0+ void near GRAPHBOARD::DrawPMBoard( long unsigned const, long unsigned const )
+0001:000033a1  void near GRAPHBOARD::DrawPMPlace( long unsigned const, char const, char const, int, long unsigned const )
+0001:000034cb  void near GRAPHBOARD::DrawPMMark( long unsigned const, long unsigned const, char const, char const )
+0001:000035e9  char near GRAPHBOARD::GetBoardCol( long )
+0001:0000362d  char near GRAPHBOARD::GetBoardRow( long )
+0001:00003671  void near GRAPHBOARD::DrawDragLine( long unsigned const, char const, char const, _POINTL )
+0001:0000388e  void near GRAPHBOARD::MarkDragLine( long unsigned const, long unsigned const, char const, char const )
+0001:000039d3  void near GRAPHBOARD::ShowPointerPos( long unsigned, long, long )
+0001:00003b3c  void near GRAPHBOARD::DisplayLines( long unsigned const )
+0001:00003d0a* void near GRAPHBOARD::DrawScanLines( long unsigned const, int const, int const )
+0001:000040a6  void near ShowStatusLine( long unsigned const, char const, char const, long const, long const )
+0001:000041da  void near GRAPHBOARD::CalcScanLines( char, char, _POINTL near &, _POINTL near &, _POINTL near &, _POINTL near &, _POINTL near &, _POINTL near &, _POINTL near &, _POINTL near &, _POINTL near & )
+0001:00004393  void near InitPS( long unsigned const )
+0001:0000447b  void near DrawPSBuffer()
+0001:00004561  void near UpdateScreen( _RECTL near * )
+0001:000045f2  void near WndResize( long unsigned const )
+0001:000046fb  void near DestroyPS()
+Module: tgraph.obj(E:\arbeit\progr\bermuda_triangle\tgraph.cpp)
+0001:00004848  void near threadgraph( void near * )
+0001:00004978+ void near * near TGraphWinProc( long unsigned, long unsigned, void near *, void near * )
+0001:000050db  void near threadsound( void near * )
+0001:000051f2+ void near * near TSoundWinProc( long unsigned, long unsigned, void near *, void near * )
+0002:00002b84+ Sound near found0
+0002:00002b8e+ Sound near foundship
+0002:00002b98+ Sound near found
+0002:00002ba2+ Sound near newhiscore
+0002:00002bac+ Sound near hochtief
+0002:00002bb6+ Sound near lost
+0002:00002bc0+ Sound near intro
+Module: e:\WATCOM\lib386\os2\clib3s.lib(stko32)
+0001:00005325* __STK
+0001:00005315  __CHK
+0001:00005351* __GRO
+0001:00005344  __STKOVERFLOW
+Module: e:\WATCOM\lib386\os2\clib3s.lib(set386)
+0001:00005380  memset
+Module: e:\WATCOM\lib386\os2\clib3s.lib(strlen)
+0001:000053a2  strlen
+Module: e:\WATCOM\lib386\plibmt3s.lib(opnewarr)
+0001:000053bc  void near * near operator new []( int unsigned )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(strcpy)
+0001:000053c9  strcpy
+Module: e:\WATCOM\lib386\plibmt3s.lib(opdelarr)
+0001:000053f0  void near operator delete []( void near * )
+Module: e:\WATCOM\lib386\plibmt3s.lib(opnew)
+0001:00005400  void near * near operator new( int unsigned )
+Module: e:\WATCOM\lib386\plibmt3s.lib(opdel)
+0001:00005464  void near operator delete( void near * )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(cmp386)
+0001:00005480  strcmp
+Module: e:\WATCOM\lib386\os2\clib3s.lib(memcpy)
+0001:0000552c  memcpy
+Module: e:\WATCOM\lib386\os2\clib3s.lib(register)
+0001:00005558  _beginthread
+0001:0000557a  _endthread
+0001:00005581  __initthread
+0001:00005590* __RegisterThreadData
+Module: e:\WATCOM\lib386\os2\clib3s.lib(sprintf)
+0001:000055f2  sprintf
+Module: e:\WATCOM\lib386\os2\clib3s.lib(cstrto32)
+0001:00005626  _cstart_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(time)
+0001:0000569a  time
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabact)
+0001:000056d4  __wcpp_2_ctor_array_
+Module: e:\WATCOM\lib386\plibmt3s.lib(undefed)
+0001:00005730  __wcpp_2_undefed_cdtor_
+Module: e:\WATCOM\lib386\plibmt3s.lib(ofsconde)
+0001:00005740  near ofstream::ofstream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(ofsdestr)
+0001:000057dc  near ofstream::~ofstream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(ifsconde)
+0001:00005870  near ifstream::ifstream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(ifsdestr)
+0001:0000590c  near ifstream::~ifstream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfoprot)
+0002:00000df4  int const near filebuf::openprot
+Module: e:\WATCOM\lib386\plibmt3s.lib(ofsconnm)
+0001:000059a0  near ofstream::ofstream( char const near *, int, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostincch)
+0001:00005a1c  ostream near & near ostream::operator <<( char const near * )
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostput)
+0001:00005b40  ostream near & near ostream::put( char )
+Module: e:\WATCOM\lib386\plibmt3s.lib(ifsconnm)
+0001:00005c9c  near ifstream::ifstream( char const near *, int, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(istgch)
+0001:00005d18  istream near & near istream::get( char near & )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(istable)
+0002:00000e0c  _IsTable
+Module: e:\WATCOM\lib386\os2\clib3s.lib(fltused)
+0000:00000000  _fltused_
+Module: e:\WATCOM\lib386\os2\emu387.lib(386inite)
+0001:00005e51* __fini_387_emulator
+0001:00005e50  __init_387_emulator
+Module: e:\WATCOM\lib386\os2\clib3s.lib(_8087386)
+0002:00001174  __8087
+0002:00001175  __real87
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabmod)
+0001:00005e54  __wcpp_2_module_dtor_
+0001:00005f00  __wcpp_2_mod_register_
+0002:000026c2* rt_init __based("XI") __wcpp_2_data_stab_init_mod_
+Module: e:\WATCOM\lib386\plibmt3s.lib(moddtorr)
+0002:00002704  ___wcpp_2_data_module_dtor_ref_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(xmsgo32)
+0001:00005f34  __exit_with_msg
+0001:00005f67  __fatal_runtime_error
+Module: e:\WATCOM\lib386\os2\clib3s.lib(maino32)
+0002:00001184  __GetThreadPtr
+0002:00001188  _AccessFileH
+0002:0000118c  _ReleaseFileH
+0002:00001190  _InitAccessH
+0002:00001194  _FiniAccessH
+0002:00001198  _AccessIOB
+0002:0000119c  _ReleaseIOB
+0002:000011a0  _AccessNHeap
+0002:000011a4  _AccessFHeap
+0002:000011a8  _ReleaseNHeap
+0002:000011ac  _ReleaseFHeap
+0001:00005fa0  __threadstack
+0001:00005fa7  __threadid
+0001:00005fae  __OS2MainInit
+0001:0000607e+ __OS2Init
+0001:00006105  __os2_exit
+0001:0000616b  __exit
+0002:000011b0  _AccessTDList
+0002:000011b4  _ReleaseTDList
+0002:000011b8  __sig_init_rtn
+0002:000011bc  __sig_fini_rtn
+0002:000011c0  __threadstksize
+0002:000011c4  __os2_exit_level
+0002:00002bcc  __Is_DLL
+0002:00002bd0  __FirstThreadData
+0002:00002bd4+ __hmodule
+0002:00002bd8+ __saved_CS
+Module: e:\WATCOM\lib386\os2\clib3s.lib(__stos)
+0001:00006190  __STOSB
+0001:000061c7* __STOSD
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nmalloc)
+0001:00006233  malloc
+0001:00006241  _nmalloc
+0002:000011c8  __nheapbeg
+0002:000011cc  __MiniHeapRover
+0002:000011d0  __LargestSizeB4MiniHeapRover
+Module: e:\WATCOM\lib386\plibmt3s.lib(cppdata)
+0002:00002cb4  _wint_thread_data_offset
+0002:00002cb8* __wcpp_2_data_catch_completed_
+0002:00002cbc  __wcpp_2_data_dtreg_vfptrs_
+0002:00002cd0* __compiled_under_generic
+0002:000026c8* rt_init __based("XI") __wcpp_2_data_multi_thread_init_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nfree)
+0001:00006344  free
+0001:00006352  _nfree
+0002:00002cd4  __MiniHeapFreeRover
+Module: e:\WATCOM\lib386\os2\clib3s.lib(thredo32)
+0001:0000646a  __CBeginThread
+0001:0000650d  __CEndThread
+Module: e:\WATCOM\lib386\os2\clib3s.lib(prtf)
+0001:00006525  __prtf
+Module: e:\WATCOM\lib386\os2\clib3s.lib(main2o32)
+0001:000071cc  __OS2Main
+Module: e:\WATCOM\lib386\os2\clib3s.lib(segdefns)
+0001:00000003  ___begtext
+0002:00000000* __nullarea
+Module: e:\WATCOM\lib386\os2\clib3s.lib(gtctmos2)
+0001:00007212  __getctime
+Module: e:\WATCOM\lib386\os2\clib3s.lib(mktime)
+0001:0000727b  mktime
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabarr)
+0001:00007412  __wcpp_2_arr_register_
+0002:000026ce* rt_init __based("XI") __wcpp_2_data_stab_init_arr_
+Module: e:\WATCOM\lib386\plibmt3s.lib(fatalerr)
+0001:0000744c  __wcpp_2_fatal_runtime_error_
+Module: e:\WATCOM\lib386\plibmt3s.lib(iosconde)
+0001:00007474  near ios::ios()
+Module: e:\WATCOM\lib386\plibmt3s.lib(fsbconde)
+0001:00007480  near fstreambase::fstreambase()
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostconde)
+0001:00007500  near ostream::ostream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(dtorarst)
+0001:0000755c  __wcpp_2_dtor_array_store_
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostdestr)
+0001:00007588  near ostream::~ostream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(fsbdestr)
+0001:000075f8  near fstreambase::~fstreambase()
+Module: e:\WATCOM\lib386\plibmt3s.lib(iosdestr)
+0001:00007678  near ios::~ios()
+Module: e:\WATCOM\lib386\plibmt3s.lib(istconde)
+0001:000076c0  near istream::istream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(istdestr)
+0001:00007754  near istream::~istream()
+Module: e:\WATCOM\lib386\plibmt3s.lib(fsbconnm)
+0001:000077c4  near fstreambase::fstreambase( char const near *, int, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(iolgldes)
+0001:00007858  near __get_lock::~__get_lock()
+Module: e:\WATCOM\lib386\plibmt3s.lib(iolglcon)
+0001:00007870  near __get_lock::__get_lock( __lock near * )
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostopfx)
+0001:0000788c  int near ostream::do_opfx()
+Module: e:\WATCOM\lib386\plibmt3s.lib(iouwrtit)
+0001:00007918  int near __WATCOM_ios::writeitem( ostream near &, char const near *, int, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(iossetst)
+0001:00007e68  void near ios::setstate( int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostflush)
+0001:00007eb0  ostream near & near ostream::flush()
+Module: e:\WATCOM\lib386\plibmt3s.lib(pure_err)
+0001:00007f21  __wcpp_2_pure_error_
+Module: e:\WATCOM\lib386\plibmt3s.lib(istdipfx)
+0001:00007f44  int near istream::do_ipfx( int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(istdoget)
+0001:00008004  istream near & near istream::do_get( char near & )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(setefg)
+0001:000080ba  __setEFGfmt
+Module: e:\WATCOM\lib386\os2\clib3s.lib(chk8087)
+0001:000080d3* __init_8087
+0001:000080e0  _fpreset
+0001:000080ea  __chk8087
+Module: e:\WATCOM\lib386\os2\clib3s.lib(crwd386)
+0002:000011f4* _psp
+0002:0000121f  _osmajor
+0002:00001220  _osminor
+0002:00001216* _Extender
+0002:00001217* _ExtenderSubtype
+0002:00001218* __X32VM
+0002:000011f8* __x386_stacklow
+0002:000011e8  _LpCmdLine
+0002:000011ec  _LpPgmName
+0002:000011f0* _LpDllName
+0002:000011e0* _dynend
+0002:000011e4  _curbrk
+0002:000011f8  _STACKLOW
+0002:000011fc* _STACKTOP
+0002:00001200  __ASTACKSIZ
+0002:00001204  __ASTACKPTR
+0002:00001208* _cbyte
+0002:0000120c* _cbyte2
+0002:00001210* _child
+0002:00001219  _Envptr
+0002:0000121d* _Envseg
+0002:00001214  __no87
+0002:00001221* __FPE_handler
+0002:00001221* ___FPE_handler
+Module: e:\WATCOM\lib386\plibmt3s.lib(prwdata)
+0002:00001226  _wint_static_init_sema
+0002:00001246  _wint_pure_error_flag
+0002:00001248  _wint_undef_vfun_flag
+0002:0000124a  _wint_module_init
+Module: e:\WATCOM\lib386\plibmt3s.lib(lock)
+0001:0000812c  near __lock::__lock()
+0001:00008141  near __lock::~__lock()
+0001:00008153  void near __lock::p()
+0001:00008161  void near __lock::v()
+0002:0000270a* rt_init __based("YI") __wcpp_2_data_fini_sisema_
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabdtor)
+0001:00008375  __wcpp_2_destruct_internal_
+0001:0000837d  __wcpp_2_destruct_all_
+0001:00008388* __wcpp_2_destruct_after_all_
+0001:00008393* __wcpp_2_destruct_
+0001:000083b0* __wcpp_2_destruct_after_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(enterdb)
+0001:000083ba  __EnterWVIDEO
+0002:00001250+ __WD_Present
+Module: e:\WATCOM\lib386\os2\clib3s.lib(regdata)
+0001:000083e5  __RegisterThreadDataSize
+0002:00001254  __ThreadDataSize
+Module: e:\WATCOM\lib386\os2\clib3s.lib(inirt386)
+0001:000083f8  __InitRtns
+0001:00008443  __FiniRtns
+Module: e:\WATCOM\lib386\os2\clib3s.lib(mthread)
+0001:00008493+ __CloseSemaphore
+0001:000084c0+ __AccessSemaphore
+0001:00008526+ __ReleaseSemaphore
+0001:0000854e+ __AccessIOB
+0001:0000855c+ __ReleaseIOB
+0001:0000856a+ __AccessFileH
+0001:0000857c+ __ReleaseFileH
+0001:0000858e+ __InitAccessH
+0001:00008593+ __FiniAccessH
+0001:000085ac+ __AccessNHeap
+0001:000085b3+ __ReleaseNHeap
+0001:000085ba+ __AccessFHeap
+0001:000085c1+ __ReleaseFHeap
+0001:000085c8+ __AccessTDList
+0001:000085cf+ __ReleaseTDList
+0001:000085d6+ __MultipleThread
+0001:00008602  __InitThreadData
+0001:00008646  __OS2AddThread
+0001:000086b1  __OS2RemoveThread
+0001:00008700  __InitMultipleThread
+0002:00001258  __AccessSema4
+0002:0000125c  __ReleaseSema4
+0002:00001260  __CloseSema4
+0002:00002710* __AccessSema4Fini
+Module: e:\WATCOM\lib386\os2\clib3s.lib(growiomd)
+0001:0000885a  __grow_iomode
+Module: e:\WATCOM\lib386\os2\clib3s.lib(exit)
+0001:00008909+ __null_int23_exit
+0001:0000890a  exit
+0001:00008927* _exit
+0002:00001264  __atexit
+0002:00001268  __int23_exit
+0002:0000126c* __FPE_handler_exit
+Module: e:\WATCOM\lib386\os2\clib3s.lib(memalloc)
+0001:00008936  __MemAllocator
+0001:000089de  __MemFree
+Module: e:\WATCOM\lib386\os2\clib3s.lib(grownear)
+0001:00008bfd  __ExpandDGROUP
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nmemneed)
+0001:00008c57  __nmemneed
+Module: e:\WATCOM\lib386\os2\clib3s.lib(heapmod)
+0002:00002e28  __nheap_clean
+0002:00002e29  __fheap_clean
+Module: e:\WATCOM\lib386\plibmt3s.lib(thrddata)
+0001:00008c5c  __wcpp_2_multi_thread_init_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(trdalloc)
+0001:00008c6c  __InitThreadProcessing
+0001:00008c88  __FiniThreadProcessing
+0002:00002e2c  __ThreadData
+Module: e:\WATCOM\lib386\os2\clib3s.lib(itoa)
+0001:00008d03+ utoa
+0001:00008d55* _itoa
+0001:00008d6f  itoa
+Module: e:\WATCOM\lib386\os2\clib3s.lib(noefgfmt)
+0002:00001270  __EFG_printf
+0002:00001274  __EFG_scanf
+Module: e:\WATCOM\lib386\os2\clib3s.lib(ltoa)
+0001:00008dd9  ultoa
+0001:00008e29* _ultoa
+0001:00008e43  ltoa
+0001:00008e78* _ltoa
+Module: e:\WATCOM\lib386\os2\clib3s.lib(toupper)
+0001:00008e92* _toupper
+0001:00008ea0  toupper
+Module: e:\WATCOM\lib386\os2\clib3s.lib(cmain386)
+0001:00008eb2  __CMain
+Module: e:\WATCOM\lib386\os2\clib3s.lib(seg386)
+0000:00001234  __DOSseg__
+Module: e:\WATCOM\lib386\os2\clib3s.lib(timeutil)
+0001:00008f0c  __leapyear
+0001:0000907e  __isindst
+0002:00000f94  __diyr
+0002:00000fae  __dilyr
+Module: e:\WATCOM\lib386\os2\clib3s.lib(gmtime)
+0001:0000938c  __brktime
+0001:000094cc+ _gmtime
+0001:000094ef* gmtime
+Module: e:\WATCOM\lib386\os2\clib3s.lib(tzset)
+0002:00001278  __start_dst
+0002:0000129c  __end_dst
+0002:000012c0  timezone
+0002:000012c4  __dst_adjust
+0002:000012c8+ daylight
+0002:0000130a  tzname
+0001:00009507* __CacheOSTZ
+0001:00009571  tzset
+0001:000097fe+ __parse_tz
+Module: e:\WATCOM\lib386\plibmt3s.lib(tssize)
+0001:00009930  __wcpp_2_ts_size_
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabreg)
+0001:00009970  __wcpp_2_base_register_
+0001:00009997* __wcpp_2_base_deregister_
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfconde)
+0001:000099ac  near filebuf::filebuf()
+Module: e:\WATCOM\lib386\plibmt3s.lib(iosinit)
+0001:000099c8  void near ios::init( streambuf near * )
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabadt)
+0001:00009a20  __wcpp_2_dtor_array_
+Module: e:\WATCOM\lib386\plibmt3s.lib(ostcoost)
+0001:00009a60  near ostream::ostream( ostream const near & )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfdestr)
+0001:00009af0  near filebuf::~filebuf()
+Module: e:\WATCOM\lib386\plibmt3s.lib(ioscoios)
+0001:00009b94  near ios::ios( ios const near & )
+Module: e:\WATCOM\lib386\plibmt3s.lib(ioufrxal)
+0001:00009c10  void near __WATCOM_ios::free_xalloc_storage( ios near * )
+Module: e:\WATCOM\lib386\plibmt3s.lib(istcoist)
+0001:00009c30  near istream::istream( istream const near & )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfopen)
+0001:00009cf0  filebuf near * near filebuf::open( char const near *, int, int )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(iobaddr)
+0001:00009daf  __get_std_stream
+Module: e:\WATCOM\lib386\os2\clib3s.lib(flush)
+0001:00009dcf  __flush
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfdspun)
+0001:00009ecc  int near streambuf::do_sputn( char const near *, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(vfun_err)
+0001:00009fb9  __wcpp_2_undef_vfun_
+Module: e:\WATCOM\lib386\plibmt3s.lib(iosfail)
+0001:00009fdc  near ios::failure::failure( int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(manws)
+0001:0000a0b0+ istream near & near operator >>( istream near &, <long near >::smanip const near & )
+0001:0000a090+ istream near & near operator >>( istream near &, <int near >::smanip const near & )
+0001:0000a070+ ostream near & near operator <<( ostream near &, <long near >::smanip const near & )
+0001:0000a050+ ostream near & near operator <<( ostream near &, <int near >::smanip const near & )
+0001:00009fe8  istream near & near ws( istream near & )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(efgfmt)
+0001:0000a0cd  _EFG_Format
+Module: e:\WATCOM\lib386\math387s.lib(cnvs2d)
+0001:0000a229  __cnvs2d
+Module: e:\WATCOM\lib386\os2\clib3s.lib(8087cw)
+0002:00001318  __8087cw
+Module: e:\WATCOM\lib386\os2\clib3s.lib(ini87386)
+0001:0000a256  __init_80x87
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabtrav)
+0001:0000a280  __wcpp_2_stab_entry_
+0001:0000a2b4  __wcpp_2_stab_trav_init_
+0001:0000a2e2  __wcpp_2_stab_trav_comp_
+0001:0000a2eb  __wcpp_2_stab_trav_next_
+0001:0000a379  __wcpp_2_stab_trav_move_
+Module: e:\WATCOM\lib386\plibmt3s.lib(stabthrw)
+0001:0000a438  __wcpp_2_corrupted_stack_
+0001:0000a7d5* __wcpp_2_catch_done_
+0001:0000aa7d+ __wcpp_2_dispatchable_
+0001:0000aade+ __wcpp_2_save_exc_
+0001:0000ab6c+ __wcpp_2_dispatch_
+0001:0000aca3* __wcpp_2_rethrow_
+0001:0000acab* __wcpp_2_throw_
+0001:0000acbe* __wcpp_2_throw_zero_
+0002:000026d4+ ___wcpp_2_data_init_longjmp_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(maxthrds)
+0002:0000131c  __MaxThreads
+Module: e:\WATCOM\lib386\os2\clib3s.lib(trdlist)
+0001:0000ade7  __GetThreadData
+0001:0000aed5  __AddThreadData
+0001:0000af3d  __RemoveThreadData
+0001:0000af8f  __FreeThreadDataList
+Module: e:\WATCOM\lib386\os2\clib3s.lib(calloc)
+0001:0000afbd  calloc
+Module: e:\WATCOM\lib386\os2\clib3s.lib(iomode)
+0001:0000afe2  __IOMode
+0001:0000b038  __SetIOMode
+0002:00001320  __NFiles
+0002:00001324  __init_mode
+0002:00001374  _iomode
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nrealloc)
+0001:0000b04e  realloc
+0001:0000b063+ _nrealloc
+Module: e:\WATCOM\lib386\os2\clib3s.lib(errno)
+0001:0000b0f7  __get_errno_ptr
+0001:0000b101* __get_doserrno_ptr
+Module: e:\WATCOM\lib386\os2\clib3s.lib(heapen)
+0001:0000b10b* _heapenable
+0002:00001378  __heap_enabled
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nheapmin)
+0001:0000b12b  _nheapshrink
+0001:0000b12b* _nheapmin
+0001:0000b12b* _heapmin
+0001:0000b12b* _heapshrink
+Module: e:\WATCOM\lib386\os2\clib3s.lib(amblksiz)
+0002:0000137c  _amblksiz
+Module: e:\WATCOM\lib386\os2\clib3s.lib(thrdmax)
+0001:0000b1f6  __GETMAXTHREADS
+Module: e:\WATCOM\lib386\os2\clib3s.lib(stack386)
+0001:0000b1fc  stackavail
+Module: e:\WATCOM\lib386\os2\clib3s.lib(cinit)
+0001:0000b22b  __CommonInit
+Module: e:\WATCOM\lib386\os2\clib3s.lib(___argc)
+0002:00002e34  ___Argc
+0002:00002e38  ___Argv
+Module: e:\WATCOM\lib386\os2\clib3s.lib(getenv)
+0001:0000b236  getenv
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfdsgtn)
+0001:0000b298  int near streambuf::do_sgetn( char near *, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfpbfai)
+0001:0000b358  int near filebuf::pbackfail( int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfoverf)
+0001:0000b4d4  int near filebuf::overflow( int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfundrf)
+0001:0000b7f0  int near filebuf::underflow()
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfsetbf)
+0001:0000ba4c  streambuf near * near filebuf::setbuf( char near *, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfseeko)
+0001:0000bad4  long near filebuf::seekoff( long, int, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfseekp)
+0001:0000bbcc  long near streambuf::seekpos( long, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfsync)
+0001:0000bbe8  int near filebuf::sync()
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfdoall)
+0001:0000bd14  int near streambuf::doallocate()
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfconde)
+0001:0000bd78  near streambuf::streambuf()
+Module: e:\WATCOM\lib386\plibmt3s.lib(iosgnilk)
+0001:0000bdcd  __lock near * near __get_next_ios_lock()
+Module: e:\WATCOM\lib386\plibmt3s.lib(flfclose)
+0001:0000be34  filebuf near * near filebuf::close()
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfdestr)
+0001:0000bea0  near streambuf::~streambuf()
+Module: e:\WATCOM\lib386\os2\clib3s.lib(liballoc)
+0001:0000bec1  _plib_malloc
+0001:0000becf  _plib_free
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfseeko)
+0001:0000bee0  long near streambuf::seekoff( long, int, int )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(plusopen)
+0001:0000bee6  __plusplus_open
+Module: e:\WATCOM\lib386\os2\clib3s.lib(iob)
+0002:00001390  __iob
+0002:00001598* __tmpfnext
+0002:00001599  _fmode
+0002:00002f44  __ClosedStreams
+Module: e:\WATCOM\lib386\os2\clib3s.lib(qwrit)
+0001:0000bf80  __qwrite
+Module: e:\WATCOM\lib386\os2\clib3s.lib(seterrno)
+0001:0000c056  __set_EDOM
+0001:0000c061  __set_ERANGE
+0001:0000c065* __set_EINVAL
+0001:0000c075  __set_errno
+0001:0000c083  __set_doserrno
+Module: e:\WATCOM\lib386\os2\clib3s.lib(lseekos2)
+0001:0000c091* _lseek
+0001:0000c0ab  lseek
+Module: e:\WATCOM\lib386\plibmt3s.lib(istpeek)
+0001:0000c108  int near istream::peek()
+Module: e:\WATCOM\lib386\plibmt3s.lib(istget)
+0001:0000c1ac  int near istream::get()
+Module: e:\WATCOM\lib386\math387s.lib(ftos)
+0001:0000c277* _SetMaxPrec
+0001:0000c40d  _FtoS
+Module: e:\WATCOM\lib386\math387s.lib(strtod)
+0001:0000c687  strtod
+Module: e:\WATCOM\lib386\plibmt3s.lib(bittest)
+0001:0000c8a4  __wcpp_2_bit_test_
+Module: e:\WATCOM\lib386\plibmt3s.lib(callterm)
+0001:0000c8c4  __wcpp_2_call_terminate_
+Module: e:\WATCOM\lib386\plibmt3s.lib(tsequiv)
+0001:0000c8d9  __wcpp_2_ts_equiv_
+Module: e:\WATCOM\lib386\plibmt3s.lib(callunex)
+0001:0000c938  __wcpp_2_call_unexpected_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(stjmp386)
+0001:0000c93e* _setjmp
+0001:0000c97d  longjmp
+Module: e:\WATCOM\lib386\plibmt3s.lib(allocexc)
+0001:0000ca20  __wcpp_2_alloc_exc_
+0001:0000cb80  __wcpp_2_free_exc_
+0001:0000cbc9  __wcpp_2_pop_exc_
+0001:0000cbd8  __wcpp_2_push_exc_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(ljmphdl)
+0002:000015b0  __longjmp_handler
+Module: e:\WATCOM\lib386\os2\clib3s.lib(isattos2)
+0001:0000cbee  isatty
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nmsize)
+0001:0000cc1c  _nmsize
+0001:0000cc1c* _msize
+Module: e:\WATCOM\lib386\os2\clib3s.lib(nexpand)
+0001:0000cc29* _expand
+0001:0000cc3e+ __HeapManager_expand
+0001:0000cde9  _nexpand
+Module: e:\WATCOM\lib386\os2\clib3s.lib(environ)
+0002:000015b4  environ
+0002:000015b8  __env_mask
+Module: e:\WATCOM\lib386\os2\clib3s.lib(strnicmp)
+0001:0000ce34* _strnicmp
+0001:0000ce4e  strnicmp
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfpbfai)
+0001:0000ceac  int near streambuf::pbackfail( int )
+Module: e:\WATCOM\lib386\os2\clib3s.lib(write)
+0001:0000ceb2  write
+Module: e:\WATCOM\lib386\os2\clib3s.lib(tellos2)
+0001:0000d1d8  tell
+Module: e:\WATCOM\lib386\os2\clib3s.lib(memmove)
+0001:0000d22b  memmove
+Module: e:\WATCOM\lib386\os2\clib3s.lib(read)
+0001:0000d27d  read
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfsetb)
+0001:0000d424  void near streambuf::setb( char near *, char near *, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfsbuf)
+0001:0000d4b8  streambuf near * near streambuf::setbuf( char near *, int )
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfgnslk)
+0001:0000d535  __lock near * near __get_next_streambuf_lock()
+Module: e:\WATCOM\lib386\plibmt3s.lib(sisema)
+0001:0000d588  __wcpp_2_static_init_
+Module: e:\WATCOM\lib386\plibmt3s.lib(stablcl)
+0001:0000d5f0  __wcpp_2_lcl_register_
+0002:000026ec* rt_init __based("XI") __wcpp_2_data_stab_init_lcl_
+Module: e:\WATCOM\lib386\os2\clib3s.lib(close)
+0001:0000d5fd  close
+Module: e:\WATCOM\lib386\os2\clib3s.lib(statos2)
+0001:0000d64b* _stat
+0001:0000d65e  stat
+Module: e:\WATCOM\lib386\os2\clib3s.lib(openos2)
+0001:0000d920  open
+0001:0000d942+ sopen
+Module: e:\WATCOM\lib386\os2\clib3s.lib(stinit)
+0002:00003050  __OpenStreams
+Module: e:\WATCOM\lib386\os2\clib3s.lib(dosret)
+0001:0000dada* _dosret0
+0001:0000daf4+ _dosretax
+0001:0000db11  __set_errno_dos
+Module: e:\WATCOM\lib386\os2\clib3s.lib(winrtns)
+0002:000015ec  _WindowsIsWindowedHandle
+0002:000015f0  _WindowsRemoveWindowedHandle
+0002:000015f4  _WindowsNewWindow
+0002:000015f8  _WindowsCloseWindow
+0002:000015fc* _WindowsSetAbout
+0002:00001600* _WindowsSetAppTitle
+0002:00001604* _WindowsSetConTitle
+0002:00001608* _WindowsDestroyOnClose
+0002:0000160c* _WindowsYieldControl
+0002:00001610* _WindowsShutDown
+0002:00001614  _WindowsStdin
+0002:00001618  _WindowsStdout
+0002:0000161c* _WindowsKbhit
+0002:00001620* _WindowsGetch
+0002:00001624* _WindowsGetche
+0002:00001628* _WindowsPutch
+0002:0000162c* _WindowExitRtn
+Module: e:\WATCOM\lib386\plibmt3s.lib(istipfx)
+0001:0000db78  int near istream::ipfx( int )
+Module: e:\WATCOM\lib386\math387s.lib(nan_inf)
+0001:0000dc09  __Nan_Inf
+Module: e:\WATCOM\lib386\math387s.lib(log387)
+0001:0000dcee* log
+0001:0000dd14* log2
+0001:0000dd01* log10
+0001:0000dc9a* IF@LOG
+0001:0000dc9a* IF@DLOG
+0001:0000dce6* IF@LOG2
+0001:0000dce6* IF@DLOG2
+0001:0000dcea* IF@LOG10
+0001:0000dcea  IF@DLOG10
+Module: e:\WATCOM\lib386\math387s.lib(floor)
+0001:0000dd27  floor
+Module: e:\WATCOM\lib386\math387s.lib(fchop)
+0001:0000dd6c  __CHP
+Module: e:\WATCOM\lib386\math387s.lib(scale)
+0001:0000dd89+ _Scale
+0001:0000dde1  _Scale10V
+Module: e:\WATCOM\lib386\math387s.lib(cvt)
+0001:0000df0d  __cvt
+Module: e:\WATCOM\lib386\os2\clib3s.lib(amodf386)
+0001:0000e10e* __ModF
+0001:0000e19e  __ZBuf2F
+Module: e:\WATCOM\lib386\os2\clib3s.lib(hugeval)
+0002:00001084  _HugeValue
+Module: e:\WATCOM\lib386\plibmt3s.lib(termnate)
+0001:0000e23c  void near terminate()
+Module: e:\WATCOM\lib386\plibmt3s.lib(unexpect)
+0001:0000e290  void near unexpected()
+Module: e:\WATCOM\lib386\plibmt3s.lib(areaexc)
+0002:00001630  __EXC_AREA
+Module: e:\WATCOM\lib386\os2\clib3s.lib(setenvp)
+0001:0000e2c8  __setenvp
+Module: e:\WATCOM\lib386\os2\clib3s.lib(_clseos2)
+0001:0000e390  __close
+Module: e:\WATCOM\lib386\os2\clib3s.lib(strpbrk)
+0001:0000e3f2  strpbrk
+Module: e:\WATCOM\lib386\os2\clib3s.lib(gtcwdos2)
+0001:0000e449  getcwd
+Module: e:\WATCOM\lib386\os2\clib3s.lib(chdiros2)
+0001:0000e521  chdir
+Module: e:\WATCOM\lib386\os2\clib3s.lib(fstatos2)
+0001:0000e560* _fstat
+0001:0000e575  fstat
+Module: e:\WATCOM\lib386\os2\clib3s.lib(tolower)
+0001:0000e6bb* _tolower
+0001:0000e6c9  tolower
+Module: e:\WATCOM\lib386\os2\clib3s.lib(d2ttime)
+0001:0000e6db  _d2ttime
+Module: e:\WATCOM\lib386\os2\clib3s.lib(strncpy)
+0001:0000e74f  strncpy
+Module: e:\WATCOM\lib386\os2\clib3s.lib(strchr)
+0001:0000e780  strchr
+Module: e:\WATCOM\lib386\os2\clib3s.lib(umaskval)
+0002:00002630  __umaskval
+Module: e:\WATCOM\lib386\os2\clib3s.lib(stricmp)
+0001:0000e79a* strcmpi
+0001:0000e79a* _stricmp
+0001:0000e7af  stricmp
+Module: e:\WATCOM\lib386\os2\clib3s.lib(initfile)
+0001:0000e7fa  __InitFiles
+Module: e:\WATCOM\lib386\os2\clib3s.lib(ioexit)
+0001:0000e86f  __full_io_exit
+0001:0000e87e* fcloseall
+Module: e:\WATCOM\lib386\math387s.lib(log87e)
+0001:0000e8e9  __log87_err
+Module: e:\WATCOM\lib386\math387s.lib(modf387)
+0001:0000e942  modf
+Module: e:\WATCOM\lib386\math387s.lib(i64ts386)
+0001:0000e962  __CmpBigInt
+0001:0000e99c  __Rnd2Int
+0001:0000ea07  __Bin2String
+Module: e:\WATCOM\lib386\math387s.lib(fpow10)
+0002:0000108c  _BigPow10Table
+Module: e:\WATCOM\lib386\os2\clib3s.lib(chipvar)
+0002:00002634* ___chipbug
+0002:00002634  __chipbug
+Module: e:\WATCOM\lib386\os2\clib3s.lib(chipd32)
+0001:0000ec3f* __fdiv_fpr
+0001:0000f101* __fdiv_chk
+0001:0000f114* __fdiv_m32
+0001:0000f160  __fdiv_m64
+0001:0000f1ac* __fdiv_m32r
+0001:0000f1f8* __fdiv_m64r
+Module: e:\WATCOM\lib386\math387s.lib(frexp)
+0001:0000f244  frexp
+Module: e:\WATCOM\lib386\os2\clib3s.lib(bits)
+0001:0000f2bf  __setbits
+0002:000010dc  _Bits
+Module: e:\WATCOM\lib386\os2\clib3s.lib(allocfp)
+0001:0000f300* __allocfp
+0001:0000f3b5+ __freefp
+0001:0000f3ec  __purgefp
+Module: e:\WATCOM\lib386\os2\clib3s.lib(fclose)
+0001:0000f40a* fclose
+0001:0000f447  __shutdown_stream
+0001:0000f47d+ __MkTmpFile
+0001:0000f4f2+ __doclose
+Module: e:\WATCOM\lib386\math387s.lib(math2err)
+0001:0000f5c0  __math1err
+0001:0000f5f3+ __math2err
+Module: e:\WATCOM\lib386\os2\clib3s.lib(chipbug)
+0001:0000f6f1  verify_pentium_fdiv_bug
+Module: e:\WATCOM\lib386\os2\clib3s.lib(gtpidos2)
+0001:0000f746  getpid
+Module: e:\WATCOM\lib386\os2\clib3s.lib(ftell)
+0001:0000f762  ftell
+Module: e:\WATCOM\lib386\os2\clib3s.lib(remove)
+0001:0000f7c6  remove
+Module: e:\WATCOM\lib386\math387s.lib(_matherr)
+0001:0000f7d4* _set_matherr
+0001:0000f7de+ __rterrmsg
+0001:0000f82b  _matherr
+0002:00002694+ _RWD_matherr
+Module: e:\WATCOM\lib386\os2\clib3s.lib(fflush)
+0001:0000f87f  fflush
+Module: e:\WATCOM\lib386\os2\clib3s.lib(unlnkos2)
+0001:0000f899  unlink
+Module: e:\WATCOM\lib386\math387s.lib(__mtherr)
+0001:0000f8b4  __matherr
+Module: e:\WATCOM\lib386\os2\clib3s.lib(fputs)
+0001:0000f8b9  fputs
+Module: e:\WATCOM\lib386\os2\clib3s.lib(fputc)
+0001:0000f963  fputc
+Module: e:\WATCOM\lib386\os2\clib3s.lib(flushall)
+0001:0000fa5f  flushall
+0001:0000fa6a+ __flushall
+Module: e:\WATCOM\lib386\math387s.lib(matherr)
+0001:0000faad  matherr
+Module: e:\WATCOM\lib386\os2\clib3s.lib(ioalloc)
+0001:0000fab0  __ioalloc
+Module: e:\WATCOM\lib386\os2\clib3s.lib(chktty)
+0001:0000fb30+ __chktty
+Module: e:\WATCOM\lib386\plibmt3s.lib(stfsync)
+0001:0000fb64  int near streambuf::sync()
+
+
+                        +----------------------+
+                        |   Imported Symbols   |
+                        +----------------------+
+
+Symbol                              Module
+======                              ======
+
+DosLoadModule                       DOSCALLS
+DosQueryProcAddr                    DOSCALLS
+DosFreeModule                       DOSCALLS
+PrfWriteProfileString               PMSHAPI
+WinQueryWindowPos                   PMWIN
+WinQueryWindowUShort                PMWIN
+PrfWriteProfileData                 PMSHAPI
+WinQuerySysValue                    PMWIN
+PrfQueryProfileData                 PMSHAPI
+WinSetWindowUShort                  PMWIN
+WinSetWindowPos                     PMWIN
+PrfOpenProfile                      PMSHAPI
+PrfCloseProfile                     PMSHAPI
+PrfQueryProfileString               PMSHAPI
+_multithreaded_wcprintp             WCATDEB
+_multithreaded_wcprintf             WCATDEB
+WinInitialize                       PMWIN
+DosBeep                             DOSCALLS
+WinCreateMsgQueue                   PMWIN
+WinGetLastError                     PMWIN
+WinRegisterClass                    PMWIN
+WinDestroyMsgQueue                  PMWIN
+WinTerminate                        PMWIN
+WinCreateStdWindow                  PMWIN
+WinCreateHelpInstance               HELPMGR
+WinAssociateHelpInstance            HELPMGR
+WinMessageBox                       PMWIN
+WinShowWindow                       PMWIN
+WinSetActiveWindow                  PMWIN
+WinGetMsg                           PMWIN
+WinDispatchMsg                      PMWIN
+WinDestroyWindow                    PMWIN
+DosCreateEventSem                   DOSCALLS
+WinQueryWindow                      PMWIN
+WinWindowFromID                     PMWIN
+DosWaitEventSem                     DOSCALLS
+WinPostMsg                          PMWIN
+WinQueryWindowRect                  PMWIN
+WinGetCurrentTime                   PMWIN
+DosCloseEventSem                    DOSCALLS
+WinSendMsg                          PMWIN
+WinSetCapture                       PMWIN
+DosResetEventSem                    DOSCALLS
+WinWaitEventSem                     PMWIN
+WinDlgBox                           PMWIN
+WinInvalidateRect                   PMWIN
+WinQueryPointerPos                  PMWIN
+WinMapWindowPoints                  PMWIN
+WinDefWindowProc                    PMWIN
+WinDefDlgProc                       PMWIN
+WinSetDlgItemShort                  PMWIN
+WinQueryDlgItemText                 PMWIN
+WinDismissDlg                       PMWIN
+WinSendDlgItemMsg                   PMWIN
+WinSetDlgItemText                   PMWIN
+DosFindFirst                        DOSCALLS
+GpiBeginPath                        PMGPI
+GpiMove                             PMGPI
+GpiLine                             PMGPI
+GpiEndPath                          PMGPI
+GpiSetColor                         PMGPI
+GpiSetMix                           PMGPI
+GpiFillPath                         PMGPI
+DosSleep                            DOSCALLS
+GpiLoadBitmap                       PMGPI
+WinDrawBitmap                       PMWIN
+GpiDeleteBitmap                     PMGPI
+GpiSetLineType                      PMGPI
+GpiSetLineWidth                     PMGPI
+GpiBox                              PMGPI
+WinFillRect                         PMWIN
+GpiCharString                       PMGPI
+WinOpenWindowDC                     PMWIN
+GpiCreatePS                         PMGPI
+DevOpenDC                           PMGPI
+DevQueryCaps                        PMGPI
+GpiBitBlt                           PMGPI
+GpiSetBitmap                        PMGPI
+GpiCreateBitmap                     PMGPI
+GpiDestroyPS                        PMGPI
+DevCloseDC                          PMGPI
+WinCreateWindow                     PMWIN
+DosPostEventSem                     DOSCALLS
+DosWrite                            DOSCALLS
+DosAllocMem                         DOSCALLS
+DosQuerySysInfo                     DOSCALLS
+DosSetRelMaxFH                      DOSCALLS
+DosFreeMem                          DOSCALLS
+DosExitList                         DOSCALLS
+DosExit                             DOSCALLS
+DosCreateThread                     DOSCALLS
+DosGetDateTime                      DOSCALLS
+DosDevConfig                        DOSCALLS
+DosCloseMutexSem                    DOSCALLS
+DosCreateMutexSem                   DOSCALLS
+DosRequestMutexSem                  DOSCALLS
+DosReleaseMutexSem                  DOSCALLS
+DosSetFilePtr                       DOSCALLS
+DosUnwindException                  DOSCALLS
+DosQueryHType                       DOSCALLS
+DosRead                             DOSCALLS
+DosQueryCurrentDisk                 DOSCALLS
+DosOpen                             DOSCALLS
+DosClose                            DOSCALLS
+DosQueryCurrentDir                  DOSCALLS
+DosSetCurrentDir                    DOSCALLS
+DosQueryFileInfo                    DOSCALLS
+DosGetInfoBlocks                    DOSCALLS
+DosDelete                           DOSCALLS
+
+
+                        +--------------------+
+                        |   Libraries Used   |
+                        +--------------------+
+
+e:\arbeit\progr\_Standard\wcatdeb.lib
+e:\WATCOM\lib386\math387s.lib
+e:\WATCOM\lib386\os2\emu387.lib
+e:\WATCOM\lib386\os2\clib3s.lib
+e:\WATCOM\lib386\plibmt3s.lib
+e:\WATCOM\lib386\os2\os2386.lib
+
+
+                        +-----------------------+
+                        |   Linker Statistics   |
+                        +-----------------------+
+
+Stack size:  00010000 (65536.)
+Memory size:  00022c0e (142350.)
+Entry point address: 0001:00005626
+Link time: 00:06.31

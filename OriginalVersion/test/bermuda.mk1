@@ -1,0 +1,83 @@
+!define BLANK ""
+f:\arbeit\progr\bermuda_triangle\test\bermuda.obj : f:\arbeit\progr\bermuda_&
+triangle\test\bermuda.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 bermuda.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standar&
+d -w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\game.obj : f:\arbeit\progr\bermuda_tri&
+angle\test\game.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 game.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standard -&
+w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\info.obj : f:\arbeit\progr\bermuda_tri&
+angle\test\info.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 info.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standard -&
+w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\mmsound.obj : f:\arbeit\progr\bermuda_&
+triangle\test\mmsound.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 mmsound.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standar&
+d -w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\pmgame.obj : f:\arbeit\progr\bermuda_t&
+riangle\test\pmgame.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 pmgame.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standard&
+ -w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\profile.obj : f:\arbeit\progr\bermuda_&
+triangle\test\profile.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 profile.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standar&
+d -w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\tgraph.obj : f:\arbeit\progr\bermuda_t&
+riangle\test\tgraph.cpp .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ *wpp386 tgraph.cpp -i=f:\WATCOM\h;f:\WATCOM\h\os2;e:\arbeit\progr\_Standard&
+ -w4 -e25 -zq -os -of -bm -mf -4s -bt=os2
+
+f:\arbeit\progr\bermuda_triangle\test\bermuda.res : f:\arbeit\progr\bermuda_&
+triangle\test\bermuda.rc .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ rc -i $[: -i f:\WATCOM\h -i f:\WATCOM\h\os2 -r bermuda.rc bermuda.res
+
+f:\arbeit\progr\bermuda_triangle\test\bermuda.exe : f:\arbeit\progr\bermuda_&
+triangle\test\bermuda.obj f:\arbeit\progr\bermuda_triangle\test\game.obj f:\&
+arbeit\progr\bermuda_triangle\test\info.obj f:\arbeit\progr\bermuda_triangle&
+\test\mmsound.obj f:\arbeit\progr\bermuda_triangle\test\pmgame.obj f:\arbeit&
+\progr\bermuda_triangle\test\profile.obj f:\arbeit\progr\bermuda_triangle\te&
+st\tgraph.obj f:\arbeit\progr\bermuda_triangle\test\bermuda.h f:\arbeit\prog&
+r\bermuda_triangle\test\defs.h f:\arbeit\progr\bermuda_triangle\test\game.h &
+f:\arbeit\progr\bermuda_triangle\test\info.h f:\arbeit\progr\bermuda_triangl&
+e\test\mmsound.h f:\arbeit\progr\bermuda_triangle\test\pmgame.h f:\arbeit\pr&
+ogr\bermuda_triangle\test\profile.h f:\arbeit\progr\bermuda_triangle\test\tg&
+raph.h f:\arbeit\progr\bermuda_triangle\test\bermuda.res .AUTODEPEND
+ @f:
+ cd f:\arbeit\progr\bermuda_triangle\test
+ @%write bermuda.lk1 NAME bermuda
+ @%append bermuda.lk1 FIL bermuda.obj,game.obj,info.obj,mmsound.obj,pmgame.o&
+bj,profile.obj,tgraph.obj
+ @%append bermuda.lk1 
+!ifneq BLANK ""
+ *wlib -q -n -b bermuda.imp 
+ @%append bermuda.lk1 LIBR bermuda.imp
+!endif
+ *wlink SYS os2v2 pm op m d all op st=8192 libp f:\arbeit\progr\_Standard li&
+br wcatdeb.lib op maxe=25 op q op symf @bermuda.lk1
+!ifneq BLANK "bermuda.res"
+ rc -i $[: -i f:\WATCOM\h -i f:\WATCOM\h\os2 bermuda.res bermuda.exe
+!endif
+

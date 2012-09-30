@@ -1,0 +1,29 @@
+f:\TOOLKIT\H\pmwin.h(242): Error! E121: (col 18) syntax error 
+f:\TOOLKIT\H\pmwin.h(242): Note! N393: (col 18) included from f:\TOOLKIT\H\pm.h(72) 
+f:\TOOLKIT\H\pmwin.h(242): Note! N393: (col 18) included from f:\TOOLKIT\H\os2.h(42) 
+f:\TOOLKIT\H\pmwin.h(242): Note! N393: (col 18) included from bermuda.cpp(9) 
+f:\TOOLKIT\H\pmwin.h(243): Error! E006: (col 14) syntax error; probable cause: missing ';' 
+f:\TOOLKIT\H\pmwin.h(341): Error! E498: (col 38) syntax error before 'PFNWP'; probable cause: incorrectly spelled type name 
+f:\TOOLKIT\H\pmwin.h(352): Error! E336: (col 12) declaration specifiers are required to declare 'MRESULT' 
+f:\TOOLKIT\H\pmwin.h(352): Error! E121: (col 12) syntax error 
+f:\TOOLKIT\H\pmwin.h(783): Error! E336: (col 28) declaration specifiers are required to declare 'PFNWP' 
+f:\TOOLKIT\H\pmwin.h(783): Error! E006: (col 15) syntax error; probable cause: missing ';' 
+f:\TOOLKIT\H\pmwin.h(785): Error! E121: (col 4) syntax error 
+f:\TOOLKIT\H\pmwin.h(786): Error! E006: (col 22) syntax error; probable cause: missing ';' 
+f:\TOOLKIT\H\pmwin.h(789): Error! E336: (col 14) declaration specifiers are required to declare 'PFNWP' 
+f:\TOOLKIT\H\pmwin.h(789): Error! E121: (col 14) syntax error 
+f:\TOOLKIT\H\pmwin.h(799): Error! E498: (col 38) syntax error before 'PCLASSINFO'; probable cause: incorrectly spelled type name 
+f:\TOOLKIT\H\pmwin.h(948): Error! E336: (col 18) declaration specifiers are required to declare 'MPARAM' 
+f:\TOOLKIT\H\pmwin.h(948): Error! E006: (col 15) syntax error; probable cause: missing ';' 
+f:\TOOLKIT\H\pmwin.h(949): Error! E336: (col 18) declaration specifiers are required to declare 'MPARAM' 
+f:\TOOLKIT\H\pmwin.h(949): Error! E498: (col 15) syntax error before 'mp2'; probable cause: incorrectly spelled type name 
+f:\TOOLKIT\H\pmwin.h(953): Error! E121: (col 4) syntax error 
+f:\TOOLKIT\H\pmwin.h(954): Error! E006: (col 17) syntax error; probable cause: missing ';' 
+f:\TOOLKIT\H\pmwin.h(1078): Error! E336: (col 12) declaration specifiers are required to declare 'MRESULT' 
+f:\TOOLKIT\H\pmwin.h(1078): Error! E121: (col 12) syntax error 
+f:\TOOLKIT\H\pmwin.h(1101): Error! E498: (col 31) syntax error before 'PQMSG'; probable cause: incorrectly spelled type name 
+f:\TOOLKIT\H\pmwin.h(1107): Error! E498: (col 32) syntax error before 'PQMSG'; probable cause: incorrectly spelled type name 
+f:\TOOLKIT\H\pmwin.h(1113): Error! E336: (col 12) declaration specifiers are required to declare 'MRESULT' 
+f:\TOOLKIT\H\pmwin.h(1113): Error! E121: (col 12) syntax error 
+f:\TOOLKIT\H\pmwin.h(1118): Error! E498: (col 32) syntax error before 'MPARAM'; probable cause: incorrectly spelled type name 
+f:\TOOLKIT\H\pmwin.h(1154): Error! E133: (col 34) too many errors: compilation aborted 

@@ -1,0 +1,3 @@
+e:\arbeit\progr\_Standard\wcapi.h(97): Warning! W014: (col 6) no reference to symbol 'format' 
+e:\arbeit\progr\_Standard\wcapi.h(97): Note! N392: (col 6) 'char * format' in 'void wcprintf( char *, ... )' defined in: e:\arbeit\progr\_Standard\wcapi.h(95) (col 39) 
+e:\arbeit\progr\_Standard\wcapi.h(97): Note! N393: (col 6) included from pmgame.cpp(19) 

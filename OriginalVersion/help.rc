@@ -1,0 +1,45 @@
+/**************************************************************************\
+ * help.rc
+ * (c) 1994 by Ralf Seidel
+ * Set tabs to 3 to get a readable source.
+\***************************************************************************/
+
+
+#include <os2.h>
+#include "defs.h"
+
+/*
+ *  Help table definition
+ */
+HELPTABLE   HELP_TABLE
+	BEGIN	
+	/* Keyword */	/* resource id	*/	
+						/* of related  */
+						/* window 		*/
+   HELPITEM			IDR_MAIN,			SUBTABLE_MAIN,			PANEL_MAIN
+	HELPITEM			IDR_PRODINFODLG,	SUBTABLE_PRODUCTINFO,PANEL_PRODUCTINFO
+	END
+
+
+/*
+ *  Main window subtable, includes menu item help
+ */
+HELPSUBTABLE SUBTABLE_MAIN
+	BEGIN
+   HELPSUBITEM    IDM_GAME,					PANEL_GAME
+   HELPSUBITEM    IDM_GAMENEW,				PANEL_GAME
+   HELPSUBITEM    IDM_GAMESOUND,				PANEL_GAME
+	HELPSUBITEM		IDM_GAMEHIGH,				PANEL_GAME
+
+	HELPSUBITEM 	IDM_HELP,						PANEL_HELP
+	HELPSUBITEM 	SC_HELPINDEX,					PANEL_HELP
+	HELPSUBITEM		IDM_HELPGENERAL				PANEL_HELP
+	HELPSUBITEM 	SC_HELPEXTENDED, 				PANEL_HELP
+	HELPSUBITEM		SC_HELPKEYS						PANEL_HELP
+	HELPSUBITEM 	IDM_HELPPRODUCTINFO,			PANEL_HELP
+	END
+
+HELPSUBTABLE SUBTABLE_PRODUCTINFO
+	BEGIN
+	END
+

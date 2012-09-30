@@ -1,0 +1,104 @@
+!define BLANK ""
+e:\arbeit\progr\bermuda_triangle\sound.obj : e:\arbeit\progr\_sound\sound.cp&
+p .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 ..\_sound\sound.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\progr\_St&
+andard;e:\arbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE;e:\V&
+isualAge\INCLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM\INCL&
+UDE;e:\TOOLKIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:\DSMI&
+\DRIVERS; -w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\profile.obj : e:\arbeit\progr\_standard\pro&
+file.cpp .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 ..\_standard\profile.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\prog&
+r\_Standard;e:\arbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE&
+;e:\VisualAge\INCLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM&
+\INCLUDE;e:\TOOLKIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:&
+\DSMI\DRIVERS; -w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\bermuda.obj : e:\arbeit\progr\bermuda_trian&
+gle\bermuda.cpp .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 bermuda.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\progr\_Standard;e&
+:\arbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE;e:\VisualAge&
+\INCLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM\INCLUDE;e:\T&
+OOLKIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:\DSMI\DRIVERS&
+; -w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\game.obj : e:\arbeit\progr\bermuda_triangle&
+\game.cpp .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 game.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\progr\_Standard;e:\a&
+rbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE;e:\VisualAge\IN&
+CLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM\INCLUDE;e:\TOOL&
+KIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:\DSMI\DRIVERS; -&
+w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\info.obj : e:\arbeit\progr\bermuda_triangle&
+\info.cpp .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 info.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\progr\_Standard;e:\a&
+rbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE;e:\VisualAge\IN&
+CLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM\INCLUDE;e:\TOOL&
+KIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:\DSMI\DRIVERS; -&
+w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\pmgame.obj : e:\arbeit\progr\bermuda_triang&
+le\pmgame.cpp .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 pmgame.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\progr\_Standard;e:&
+\arbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE;e:\VisualAge\&
+INCLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM\INCLUDE;e:\TO&
+OLKIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:\DSMI\DRIVERS;&
+ -w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\tgraph.obj : e:\arbeit\progr\bermuda_triang&
+le\tgraph.cpp .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ *wpp386 tgraph.cpp -i=e:\TOOLKIT\H;e:\WATCOM\H;e:\arbeit\progr\_Standard;e:&
+\arbeit\progr\_Sound;e:\JAVAOS2\INCLUDE\OS2;e:\JAVAOS2\INCLUDE;e:\VisualAge\&
+INCLUDE;e:\VisualAge\INCLUDE\SOM;e:\TOOLKIT\INC;e:\TOOLKIT\SOM\INCLUDE;e:\TO&
+OLKIT\BETA\BRENDER\INCLUDE;e:\TOOLKIT\BETA\H;e:\DSMI\SOURCE;e:\DSMI\DRIVERS;&
+ -w4 -e25 -zq -os -of -bm -4s -bt=os2 -mf
+
+e:\arbeit\progr\bermuda_triangle\bermuda.res : e:\arbeit\progr\bermuda_trian&
+gle\bermuda.rc .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ rc -i $[: -i e:\WATCOM\h -i e:\WATCOM\h\os2 -r bermuda.rc bermuda.res
+
+e:\arbeit\progr\bermuda_triangle\bermuda.exe : e:\arbeit\progr\bermuda_trian&
+gle\sound.obj e:\arbeit\progr\bermuda_triangle\profile.obj e:\arbeit\progr\b&
+ermuda_triangle\bermuda.obj e:\arbeit\progr\bermuda_triangle\game.obj e:\arb&
+eit\progr\bermuda_triangle\info.obj e:\arbeit\progr\bermuda_triangle\pmgame.&
+obj e:\arbeit\progr\bermuda_triangle\tgraph.obj e:\arbeit\progr\_sound\sound&
+.h e:\arbeit\progr\_standard\profile.h e:\arbeit\progr\bermuda_triangle\berm&
+uda.h e:\arbeit\progr\bermuda_triangle\defs.h e:\arbeit\progr\bermuda_triang&
+le\game.h e:\arbeit\progr\bermuda_triangle\info.h e:\arbeit\progr\bermuda_tr&
+iangle\pmgame.h e:\arbeit\progr\bermuda_triangle\tgraph.h e:\arbeit\progr\be&
+rmuda_triangle\bermuda.res .AUTODEPEND
+ @e:
+ cd e:\arbeit\progr\bermuda_triangle
+ @%write bermuda.lk1 NAME bermuda
+ @%append bermuda.lk1 FIL sound.obj,profile.obj,bermuda.obj,game.obj,info.ob&
+j,pmgame.obj,tgraph.obj
+ @%append bermuda.lk1 
+!ifneq BLANK ""
+ *wlib -q -n -b bermuda.imp 
+ @%append bermuda.lk1 LIBR bermuda.imp
+!endif
+ *wlink d all SYS os2v2 pm op m libp e:\arbeit\progr\_Standard libr wcatdeb.&
+lib op maxe=25 op q op symf @bermuda.lk1
+!ifneq BLANK "bermuda.res"
+ rc -i $[: -i e:\WATCOM\h -i e:\toolkit\h\ -i e:\arbeit\progr\_Sound\ bermud&
+a.res bermuda.exe
+!endif
+

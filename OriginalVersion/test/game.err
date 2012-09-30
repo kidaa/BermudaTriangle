@@ -1,0 +1,11 @@
+game.cpp(80): Warning! W391: (col 54) assignment found in boolean expression 
+game.cpp(83): Warning! W391: (col 64) assignment found in boolean expression 
+game.cpp(86): Warning! W391: (col 54) assignment found in boolean expression 
+game.cpp(89): Warning! W391: (col 64) assignment found in boolean expression 
+game.cpp(92): Warning! W391: (col 54) assignment found in boolean expression 
+game.cpp(95): Warning! W391: (col 64) assignment found in boolean expression 
+game.cpp(98): Warning! W389: (col 21) integral value may be truncated during assignment or initialization 
+game.cpp(98): Warning! W391: (col 46) assignment found in boolean expression 
+game.cpp(101): Warning! W389: (col 21) integral value may be truncated during assignment or initialization 
+game.cpp(101): Warning! W389: (col 32) integral value may be truncated during assignment or initialization 
+game.cpp(101): Warning! W391: (col 48) assignment found in boolean expression 

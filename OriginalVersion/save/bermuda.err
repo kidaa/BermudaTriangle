@@ -1,0 +1,2 @@
+bermuda.cpp(564): Warning! W014: (col 1) no reference to symbol 'IntroSoundPlayed' 
+bermuda.cpp(564): Note! N392: (col 1) 'unsigned long IntroSoundPlayed' in 'void * syscall WndProc( unsigned long, unsigned long, void *, void * )' defined in: bermuda.cpp(207) (col 17) 

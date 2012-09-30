@@ -1,0 +1,5 @@
+NAME 'Bermuda Triangle' WINDOWAPI
+DESCRIPTION 'A small game'
+PROTMODE
+STACKSIZE 0xF000
+

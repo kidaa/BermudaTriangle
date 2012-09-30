@@ -1,0 +1,45 @@
+Hya, Resource Hacker! 
+
+Since you went to all this trouble of looking into the
+Galaxis game, I might as well tell you some trivia about
+the sounds used in the Galaxis game...
+
+BTW: did you send in the postcard to Barbara?
+
+All sounds (c) 1992 by Christian Franz. 
+
+Sounds were produced using the CEDAR TECHNOLOGIES SID II, 
+a great non-profit sound-input device.
+
+Where did I sample those sounds?
+
+Intro Sound:
+  - Alan Parsons Project: 'You don't believe'
+
+Found One:
+  - Marc Antoine Carpentier: 'Te Deum', Prelude
+
+Found None Sound:
+  - Self-Programmed.
+
+Found One Sound:
+  - Self-Programmed
+
+Hoch 1:
+  - Tonedialling '#'-Sound (never guessed, huh?)
+
+Tief 1:
+  - Tonedialling '5'-Sound
+
+New Hiscore:
+  - March of King Friedrich the Great
+
+Time Running Out: (in Galaxis program)
+  - Mozart: Eine kleine Nachtmusik
+
+Too Late, Next Turn: (in Galaxis program)
+  - Yello: Oh Yeah!
+
+Oh No! & Tick:
+  - Taken from Lemmings! by Psygnosis Software
+

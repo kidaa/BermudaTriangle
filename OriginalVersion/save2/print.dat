@@ -1,0 +1,1780 @@
+/////////////////////////////////////////////////////////////////////
+//	main program bermuda.cpp
+#define INCL_DOSPROCESS
+	// DosBeep()
+#define INCL_DOSSEMAPHORES
+#define INCL_WIN
+//#define INCL_GPI
+#include <os2.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <process.h>    // _beginthread()
+#include <string.h>
+
+#include "pmassert.h"
+#include "pmerror.h"
+#include "game.h"
+#include "pmgame.h"
+#include "defs.h"
+#include "info.h"
+#include "tgraph.h"
+#include "profile.h"
+// #include "mmsound.h"
+#include "bermuda.h"
+
+#define BEEP_WARN_FREQ	440U
+#define BEEP_WARN_DUR	100U
+
+// Prototypes
+
+extern "C" MRESULT EXPENTRY WndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern "C" MRESULT EXPENTRY HighScoreDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern "C" MRESULT EXPENTRY ProdInfoDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern "C" MRESULT EXPENTRY GameSettingsDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern "C" MRESULT EXPENTRY ShowHighDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+
+
+// global variables
+
+HAB hab;
+HMQ hmq;
+HWND hwndFrame;
+HWND hwndMain;
+HWND hwndHelp;
+HELPINIT HelpInit;
+
+// Semaphore handles
+HEV hevScan;	// blocks the found... sounds until scanning is finished
+HEV hevHiScoreWin;	// blocks the HiScoreWindow until its sound is played
+HEV hevScanWait;	// blocks the next graphical display until the previous
+						// scanning sound has finished
+HEV hevSoundWait;	// blocks the next graphical display until the sound is
+						// ready to play
+
+
+char Score;
+GLOBALS *pg;
+GRAPHBOARD GBoard;
+BOOL fHideSquare = TRUE;		// indicates whether the grey square is hidden
+GRAPHICS_PARAMETERS graphparms;
+
+
+main( /* INT argc, CHAR *argv[], CHAR *envp[] */ )
+{
+	QMSG qmsg;					// message queue
+	ULONG fWndCtrlData;		// game Window style flags
+	BOOL fRegistered;			//
+//	RECTL RectWinPos;			// needed when resizing the window
+//	LONG cxScreen;
+//	LONG cyScreen;
+	INT rc;
+	ERRORID error;
+
+	static CHAR szClientClass[] = "bermuda.child";
+//	pszProgName = argv[0];		// get the full qualified program name
+
+	if( ( hab = WinInitialize(0) ) == NULLHANDLE ){
+		DosBeep( BEEP_WARN_FREQ, BEEP_WARN_DUR );
+		return 1;
+	}
+	if( (hmq = WinCreateMsgQueue( hab, 0 ) ) == NULLHANDLE ){
+		error = WinGetLastError( hab );
+		DosBeep( BEEP_WARN_FREQ, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 50, BEEP_WARN_DUR );
+		WinTerminate( hab );
+		return 1;
+	}
+
+	fRegistered = WinRegisterClass( hab, szClientClass, (PFNWP)WndProc,
+						CS_SIZEREDRAW | CS_MOVENOTIFY, 0 );
+
+	if( !fRegistered ){
+		rc = WinGetLastError( hab );
+		DosBeep( BEEP_WARN_FREQ, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 50, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 100, BEEP_WARN_DUR );
+		WinDestroyMsgQueue( hmq );
+		WinTerminate( hab );
+		return 1;
+	}
+
+	fWndCtrlData = FCF_MINMAX		| FCF_TASKLIST		|
+		            FCF_SYSMENU    | FCF_TITLEBAR    |
+						FCF_SIZEBORDER | FCF_MENU        |
+						FCF_ICON			| FCF_AUTOICON;
+/*						
+			 		   FCF_ACCELTABLE 
+*/ // use these later
+	hwndFrame =
+		WinCreateStdWindow( HWND_DESKTOP,	// parent window
+								  WS_ANIMATE,		// don't make window visible yet
+								  &fWndCtrlData,	// window parameters, defined above
+								  szClientClass,	// window class, def. above
+								  pszAppName,	// Title Bar text
+								  0,					// client window style
+								  0,					// resources are bound within the .exe
+								  IDR_MAIN,			// frame-window identifier (see .rc)
+								  &hwndMain );	// output client-window handle
+
+	if( hwndFrame == NULLHANDLE ){
+		DosBeep( BEEP_WARN_FREQ, BEEP_WARN_DUR);
+		DosBeep( BEEP_WARN_FREQ + 50, BEEP_WARN_DUR);
+		DosBeep( BEEP_WARN_FREQ + 100, BEEP_WARN_DUR);
+		DosBeep( BEEP_WARN_FREQ + 150, BEEP_WARN_DUR);
+		WinDestroyMsgQueue( hmq );
+		WinTerminate( hab );
+		return 1;
+	}
+
+	// allocate space for the gameboard
+//	GBoard = new GRAPHBOARD( 6, 9 );
+
+	// initialize the help facility
+	HelpInit.cb = sizeof(HELPINIT);
+	HelpInit.pszTutorialName = NULL;
+	HelpInit.phtHelpTable = (PHELPTABLE)MAKELONG(HELP_TABLE, 0xFFFF );
+	HelpInit.hmodHelpTableModule = NULLHANDLE;
+	HelpInit.hmodAccelActionBarModule = NULLHANDLE;
+	HelpInit.idAccelTable = 0;
+	HelpInit.idActionBar = 0;
+	HelpInit.pszHelpWindowTitle = "Help for Bermuda Triangle";
+	HelpInit.fShowPanelId = CMIC_HIDE_PANEL_ID;
+	HelpInit.pszHelpLibraryName = "bermuda.hlp";
+
+	hwndHelp = WinCreateHelpInstance( hab, &HelpInit );
+	if( !hwndHelp || HelpInit.ulReturnCode ){	// Help instance creation failed
+		WinMessageBox( HWND_DESKTOP, hwndMain,
+			"Couldn't create help instance.\nHelp will be disabled.\n" \
+			"To use the online help the file bermuda.hlp must either be " \
+			"in the current working directory or in one of the " \
+			"directories listed in your HELP environment variable.",
+			"Error when using WinCreateHelpInstance",
+			0, MB_OK | MB_INFORMATION );
+	} else {
+		if ( !WinAssociateHelpInstance( hwndHelp, hwndFrame ) )
+        WinMessageBox( hwndMain, hwndFrame,
+   	     "Couldn't associate help instance.\nHelp will be disabled.",
+      		"Error when using WinAssociateHelpInstance",
+		      0, MB_OK | MB_INFORMATION );
+	}
+
+
+	if(!ReadProfile( hab )){
+		LONG cxScreen = WinQuerySysValue( HWND_DESKTOP, SV_CXSCREEN );
+		LONG cyScreen = WinQuerySysValue( HWND_DESKTOP, SV_CYSCREEN );
+		WinSetWindowPos( hwndFrame, NULLHANDLE, cxScreen / 6,
+								cyScreen  / 6,
+								cxScreen  * 2 / 3, cyScreen * 2 / 3,
+								SWP_SIZE | SWP_MOVE );
+	}
+
+	// Now we can make the active window visible:
+	if( !WinShowWindow( hwndFrame, TRUE ) ){
+		DosBeep( BEEP_WARN_FREQ, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 50, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 100, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 150, BEEP_WARN_DUR );
+		DosBeep( BEEP_WARN_FREQ + 200, BEEP_WARN_DUR );
+	}
+
+	// Now we can bring the window to the foreground
+	// (it doesn't matter if this isn't successful)
+	WinSetActiveWindow( HWND_DESKTOP, hwndFrame );
+
+	// get / dispatch message loop
+	while( WinGetMsg( hab, (PQMSG)&qmsg, NULLHANDLE, 0L, 0L ) )
+		WinDispatchMsg( hab, (PQMSG)&qmsg );
+
+	// clean up
+	WinDestroyWindow( hwndFrame );
+	WinDestroyMsgQueue( hmq );
+	WinTerminate( hab );
+	return 0;
+
+}	// end of main
+
+
+		
+		
+extern "C"
+MRESULT EXPENTRY WndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
+{
+//	static POINTS DragStartPtrPos;
+	HPS hps;
+	POINTL ptl;
+	static char Row, Col;
+	static BOOL HasMoved = FALSE;
+	static BOOL IntroSoundPlayed = FALSE;
+	INT aktscan;
+	CHAR msgtext[256];
+	ULONG ulResponse;
+//	ERRORID errId;
+
+	
+	switch( msg ){
+		case WM_CREATE:
+			if( !InfoData.LoadHigh() ){	// get previously saved highscores
+				InfoData.ResetHigh();
+				WinMessageBox( HWND_DESKTOP, hwndMain,
+				"The file scores.dat " \
+				"(which is in the current directory) was somehow corrupted." \
+				" All Highscores will be reset to Zero.",
+				"Error when loading Highscores",
+				0, MB_OK | MB_INFORMATION );
+			}
+
+		    // allocate memory for global variables; see GLOBALS struct in tgraph.h
+			pg = (GLOBALS*) malloc( sizeof( GLOBALS ));
+			pmassert( hab, pg );
+		    // initialize globals to zero
+			memset( pg, 0, sizeof( GLOBALS ));
+    // store globals pointer into client window words; see WinRegisterClass
+//    WinSetWindowULong( hwnd, QWL_USER, (ULONG) pg );
+    // initialize globals with important data
+			pg->hab          = hab;
+			pg->hwndClient   = hwnd;
+			pg->hwndFrame    = WinQueryWindow( hwnd, QW_PARENT );
+			pg->hwndTitlebar = WinWindowFromID( pg->hwndFrame, FID_TITLEBAR );
+			pg->hwndMenubar  = WinWindowFromID( pg->hwndFrame, FID_MENU );
+		    // create graphics and sound threads
+			pg->tidTGraph = _beginthread( &threadgraph, NULL, LEN_STACK, NULL );
+			pmassert( hab, pg->tidTGraph );
+			pg->tidTSound = _beginthread( &threadsound, NULL, LEN_STACK, NULL );
+			pmassert( hab, pg->tidTSound );
+
+			InfoData.ShipsNotFound = GBoard.GetShipNumber();
+			DosCreateEventSem( NULL, &hevScan, 0, TRUE );
+				// Sem is created in posted state
+			DosCreateEventSem( NULL, &hevHiScoreWin, 0, FALSE );
+				// Sem is created in reset state
+			DosCreateEventSem( NULL, &hevScanWait, 0, TRUE );
+			DosCreateEventSem( NULL, &hevSoundWait, 0, TRUE );
+
+	   return (MRESULT)0;
+			
+		case WM_CONTROL:
+			break;
+		case WM_QUIT:
+			break;
+		case WM_CLOSE:	// this message is sent before WM_QUIT
+			InfoData.SaveHigh( WinGetCurrentTime(hab) );
+				// save the highscores and provide a random seed
+			    // get pointer to globals from window words
+//    pg = (PGLOBALS) WinQueryWindowULong( hwnd, QWL_USER );
+		    // tell object windows to quit, then exit their threads
+			WinSendMsg( pg->hwndTGraph, WM_DESTROY, 0, 0 );
+			WinPostMsg( pg->hwndTSound, WM_QUIT, 0, 0 );
+			DosCloseEventSem( hevScan );
+			DosCloseEventSem( hevHiScoreWin );
+			DosCloseEventSem( hevScanWait );
+			DosCloseEventSem( hevSoundWait );
+			WriteProfile( hab );
+			return (MRESULT) 0;
+	
+		case WM_ERASEBACKGROUND:
+			return (MRESULT) FALSE;
+//			break;	              
+		case WM_PAINT:
+DosBeep( 500, 150 );			
+MessageWithHMQ("Test");		
+			fHideSquare = TRUE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								MPFROM2SHORT( 0, 0 ) );
+//			GBoard.ShowPointerPos(hwnd, 0, 0);
+			WinPostMsg( pg->hwndTGraph, WM_USER_PAINT, MPFROMHWND(hwnd), 0 );
+			return (MRESULT)0;
+			break;
+		case WM_SIZE:
+			if( !IntroSoundPlayed ) {
+				WinPostMsg( pg->hwndTSound, WM_SOUND_INTRO, MPFROMHWND(hwnd), 0 );
+				IntroSoundPlayed = TRUE;
+			}
+			GBoard.SetPMBoardValues( SHORT1FROMMP( mp2 ), SHORT2FROMMP( mp2 ) );
+			break;
+		case WM_BEGINDRAG:
+			GBoard.SetfDrag( TRUE );
+			GBoard.ResetFirstDraw();
+			fHideSquare = TRUE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								MPFROM2SHORT( 0, 0 ) );
+//			GBoard.ShowPointerPos( hwnd, 0, 0 ); // removes the square
+			ptl.x = SHORT1FROMMP(mp1);
+			ptl.y = SHORT2FROMMP(mp1);
+			Row = GBoard.GetBoardRow( ptl.y );
+			Col = GBoard.GetBoardCol( ptl.x );
+			return (MRESULT)TRUE;
+		case WM_MOUSEMOVE:
+			if( GBoard.GetfDrag() ){
+				ptl.x = SHORT1FROMMP(mp1);
+				ptl.y = SHORT2FROMMP(mp1);
+				GBoard.DrawDragLine( hwnd, Row, Col, ptl );
+				HasMoved = TRUE;
+			} else {
+				if( !fHideSquare )
+					WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								mp1 );
+//					GBoard.ShowPointerPos( hwnd, SHORT1FROMMP(mp1),
+//														  SHORT2FROMMP(mp1));
+			}
+			break;	
+		case WM_ENDDRAG:
+			if( HasMoved ){
+				GBoard.MarkDragLine( hwnd, Row, Col );
+				HasMoved = FALSE;
+			}
+			GBoard.SetfDrag( FALSE );
+			GBoard.ClearDrawPoint();	// because no square is drawn right now
+			fHideSquare = FALSE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								mp1 );
+//			GBoard.ShowPointerPos( hwnd, SHORT1FROMMP(mp1), SHORT2FROMMP(mp1));
+				// draws square at the current ptr pos
+			break;
+		case WM_CHAR:
+			if( SHORT2FROMMP( mp2 ) != VK_SPACE ) break;
+			if( !GBoard.GetfShowLines() ){	// key was pressed
+				GBoard.SetfShowLines( TRUE );
+				GBoard.DisplayLines( hwnd );	
+			}
+			break;	
+		case WM_BUTTON1CLICK:
+			if( !InfoData.ShipsNotFound ) break;	// game is finished
+			ptl.x = (LONG)SHORT1FROMMP( mp1 );
+			ptl.y = (LONG)SHORT2FROMMP( mp1 );
+			Row = GBoard.GetBoardRow( ptl.y );
+			Col = GBoard.GetBoardCol( ptl.x );
+			if( !Row || !Col ) break;
+			fHideSquare = TRUE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								MPFROM2SHORT( 0, 0 ) );
+//			GBoard.ShowPointerPos( hwnd, 0, 0 );	// hides pointer square
+			if(( aktscan = GBoard.GetDiscovered( Row, Col )) != -1 ){
+				WinSendMsg( pg->hwndTGraph, WM_DRAWPMPLACE, MPFROMHWND(hwnd),
+								MPFROMSH2CH( MAKESHORT(Row, Col),
+												 (CHAR)aktscan,(CHAR)TRUE));
+// umstricken auf WinPostMsg												 
+						// toggle Place display
+			} else {	// scan Place
+				DosResetEventSem( hevScan, &ulResponse );
+// DosBeep(500, 150 );				
+				WinPostMsg( pg->hwndTGraph, WM_GRAPH_SCAN, MPFROMHWND(hwnd),
+								MPFROM2SHORT( Row, Col ) );
+// DosBeep( 800, 150 );								
+				WinWaitEventSem( hevScan, SEM_INDEFINITE_WAIT );
+// DosBeep( 1000, 150 );				
+					// first the scanning sounds must be played (and finished)
+				aktscan = GBoard.Scan( Row, Col );
+				if( aktscan == GBoard.GetShipNumber() + 10 ){
+					InfoData.ShipsNotFound--;
+					WinPostMsg( pg->hwndTSound, WM_SOUND_FOUNDSHIP, MPFROMHWND(hwnd), 0 );
+				} else {
+					if( aktscan )
+						WinPostMsg( pg->hwndTSound, WM_SOUND_FOUND,
+										MPFROMHWND(hwnd), MPFROMLONG( aktscan ) );
+					else	
+						WinPostMsg( pg->hwndTSound, WM_SOUND_FOUND0, MPFROMHWND(hwnd), 0 );
+				}
+				WinWaitEventSem( hevScan, SEM_INDEFINITE_WAIT );
+					// waits until scanning is done, and only then displays the
+					// field icon
+				hps = WinGetPS( hwnd );
+				WinSendMsg( pg->hwndTGraph, WM_DRAWPMPLACE, MPFROMHWND(hwnd),
+								MPFROMSH2CH( MAKESHORT(Row, Col),
+												 (CHAR)aktscan,(CHAR)TRUE));
+// umstricken auf WinPostMsg												 
+				ShowStatusLine( hps, GBoard.MovesNeeded(), InfoData.ShipsNotFound,
+									 GBoard.GetWinWidth(), GBoard.GetWinHeight() );
+				WinReleasePS( hps );
+				if( !InfoData.ShipsNotFound ){	// game is finished, all ships found
+					Score = GBoard.MovesNeeded();
+					if	( !InfoData.ReturnLastHigh()
+							|| Score < InfoData.ReturnLastHigh() ){
+						// player enters highscore table
+						WinPostMsg( pg->hwndTSound, WM_SOUND_NEWHISCORE, MPFROMHWND(hwnd), 0 );
+						WinWaitEventSem( hevHiScoreWin, SEM_INDEFINITE_WAIT );
+						// waits until the NEWHISCORE sound is actually played
+						WinDlgBox( HWND_DESKTOP, hwnd, HighScoreDlgProc, (HMODULE)0,
+									  IDR_HIGHSCOREDLG, NULL );
+						WinPostMsg( hwnd, WM_COMMAND,
+										MPFROMSHORT(IDM_GAMEHIGH), (MPARAM)0 );
+										// show highscore-table
+						DosResetEventSem( hevHiScoreWin, &ulResponse ); // resets the sem again
+					} else {
+						sprintf( msgtext,
+							"You needed %d moves to find the lost ships. " \
+							"To enter the highscore list you need %d moves." \
+							" So try again!", Score, InfoData.ReturnLastHigh() );
+						WinMessageBox( HWND_DESKTOP, hwnd, msgtext, "Quite good!", 0,
+										MB_OK | MB_INFORMATION | MB_HELP );
+					}
+				}
+			}
+			fHideSquare = FALSE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								MPFROM2SHORT( ptl.x, ptl.y ) );
+//			GBoard.ShowPointerPos( hwnd, ptl.x, ptl.y ); // redisplay ptr square
+			break;
+		case WM_BUTTON2CLICK:
+			fHideSquare = TRUE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								MPFROM2SHORT( 0, 0 ) );
+//			GBoard.ShowPointerPos( hwnd, 0, 0 );	// hide pointer square
+			ptl.x = (LONG)SHORT1FROMMP( mp1 );
+			ptl.y = (LONG)SHORT2FROMMP( mp1 );
+			Row = GBoard.GetBoardRow( ptl.y );
+			Col = GBoard.GetBoardCol( ptl.x );
+//			hps = WinGetPS( hwnd );
+//			GBoard.DrawPMMark( hps, Row, Col );
+//			WinReleasePS( hps );
+			WinSendMsg( pg->hwndTGraph, WM_DRAWPMMARK, MPFROMHWND(hwnd),
+								MPFROM2SHORT( Row, Col ) );
+			fHideSquare = FALSE;
+			WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+								MPFROM2SHORT( ptl.x, ptl.y ) );
+//			GBoard.ShowPointerPos( hwnd, ptl.x, ptl.y );	// redisplay ptr square
+			break;
+		case WM_COMMAND:
+			switch( SHORT1FROMMP( mp1 ) ){
+				case IDM_GAMENEW:
+					GBoard.NewGame();
+					InfoData.ShipsNotFound = GBoard.GetShipNumber();
+					WinInvalidateRect( hwnd, NULL, TRUE );
+					break;
+				case IDM_GAMESETTINGS:
+					if( WinDlgBox( HWND_DESKTOP, hwndFrame,
+							GameSettingsDlgProc, (HMODULE)0,
+							IDR_GAMESETTINGSDLG, NULL ) ){
+							// screen must be repainted
+						WinInvalidateRect( hwnd, NULL, TRUE );
+					}
+					break;
+				case IDM_GAMEHIGH:
+					if( !WinDlgBox( HWND_DESKTOP, hwndFrame,
+							ShowHighDlgProc, (HMODULE)0,
+							IDR_SHOWHIGHDLG, NULL ) ){	// user requested "Clear"
+						if( WinMessageBox( HWND_DESKTOP, hwndMain,
+									"Do you really want to eradicate all those " \
+									"arduously achieved highscores?",
+									"Clear Highscores",
+									0, MB_OKCANCEL | MB_WARNING ) == MBID_OK )
+							InfoData.ResetHigh();
+					}
+					break;
+				case IDM_HELPPRODUCTINFO:
+					ulResponse = WinDlgBox( HWND_DESKTOP, hwndFrame,
+							ProdInfoDlgProc, (HMODULE)0,
+							IDR_PRODINFODLG, NULL );
+					break;		
+			}
+			break;
+		case HM_HELPSUBITEM_NOT_FOUND:
+			return (MRESULT)FALSE;
+		case WM_USER_ACK:	// graphics task finished its work
+//         DosBeep( 1000, 150 );
+			switch( (ULONG)mp1 ){
+				case WM_USER_PAINT:
+					WinQueryPointerPos( HWND_DESKTOP, &ptl );
+					WinMapWindowPoints( HWND_DESKTOP, hwnd, &ptl, 1);
+					fHideSquare = FALSE;
+					WinPostMsg( pg->hwndTGraph, WM_SHOWPOINTERPOS, MPFROMHWND(hwnd),
+									MPFROM2SHORT( ptl.x, ptl.y ) );
+//					GBoard.ShowPointerPos( hwnd, ptl.x, ptl.y );
+					// painting has finished, square can be displayed now
+					break;
+			}
+			break;	
+   case WM_SOUND_ACK:
+      switch( (ULONG)mp1 ){
+      case WM_SOUND_INTRO:
+         break;
+      }
+      break;
+
+			
+		default:
+			return (MRESULT)WinDefWindowProc( hwnd, msg, mp1, mp2 );
+	}		// end switch( msg )
+	return (MRESULT)WinDefWindowProc( hwnd, msg, mp1, mp2 );
+}		// end MRESULT EXPENTRY WndProc()
+
+	
+extern "C"
+MRESULT EXPENTRY HighScoreDlgProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
+{
+	char PlayerName[21];
+
+	switch( msg ){
+		case WM_INITDLG:
+			WinSetDlgItemShort( hwnd, IDR_SCORENUMBER, (USHORT)Score, FALSE);
+			return (MRESULT)0;
+		case WM_COMMAND:
+			switch( SHORT1FROMMP( mp1 ) ){
+				case DID_OK:
+					WinQueryDlgItemText( hwnd, ID_NAME, 20, PlayerName );
+					if( PlayerName[0] == '\0' )
+						strcpy( PlayerName, "<didn't tell me>" );
+					InfoData.InsertHigh( PlayerName, Score );
+					// Score is a global variable
+					WinDismissDlg( hwnd, TRUE );
+					return (MRESULT)0;
+				default:
+					return WinDefDlgProc( hwnd, msg, mp1, mp2 );
+			}
+	}
+	return WinDefDlgProc( hwnd, msg, mp1, mp2 );
+}
+
+extern "C"
+MRESULT EXPENTRY ProdInfoDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
+{
+	switch( msg ){
+		case WM_INITDLG:
+			return (MRESULT)0;
+		case WM_COMMAND:
+			WinDismissDlg( hwnd, TRUE );
+			return (MRESULT)0;
+	}
+	return WinDefDlgProc( hwnd, msg, mp1, mp2 );
+}
+
+extern "C" MRESULT EXPENTRY GameSettingsDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
+{
+	ULONG OldLineStyle = InfoData.GetLineStyle();
+	switch( msg ){
+		case WM_INITDLG:
+			(VOID)WinCheckButton( hwnd, (USHORT)IDC_DIAGONALS, InfoData.IsLineStyle(IDC_DIAGONALS) );
+			(VOID)WinCheckButton( hwnd, (USHORT)IDC_VERTICALS, InfoData.IsLineStyle(IDC_VERTICALS));
+			(VOID)WinCheckButton( hwnd, (USHORT)IDC_DIAGONALS_AND_VERTICALS, InfoData.IsLineStyle(IDC_DIAGONALS_AND_VERTICALS));
+			(VOID)WinCheckButton( hwnd, (USHORT)IDC_SOUND, InfoData.GetSound() );
+			(VOID)WinEnableControl( hwnd, (USHORT)IDC_SOUND,
+											InfoData.IsSoundAvailable() );
+			break;
+		case WM_COMMAND:
+			switch( SHORT1FROMMP( mp1 ) ){
+				case DID_OK:
+					if( WinQueryButtonCheckstate( hwnd, IDC_DIAGONALS ) )
+						InfoData.SetLineStyle(IDC_DIAGONALS);
+					else
+						if( WinQueryButtonCheckstate( hwnd, IDC_VERTICALS ) )
+							InfoData.SetLineStyle(IDC_VERTICALS);
+						else InfoData.SetLineStyle(IDC_DIAGONALS_AND_VERTICALS);
+					InfoData.SetSound( WinQueryButtonCheckstate(hwnd, IDC_SOUND) );
+					WinDismissDlg( hwnd, !InfoData.IsLineStyle(OldLineStyle) );
+					return (MRESULT)0;
+				case DID_CANCEL:
+					WinDismissDlg( hwnd, FALSE );
+					return (MRESULT)0;
+				case IDC_GAMESETTINGSHELP:
+					return (MRESULT)0;				
+			}
+	}	
+	return WinDefDlgProc( hwnd, msg, mp1, mp2 );
+}
+
+extern "C"
+MRESULT EXPENTRY ShowHighDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
+{
+	int i;
+	switch( msg ){
+		case WM_INITDLG:
+			for( i = 0; i < 10; i++){
+				WinSetDlgItemText( hwnd, 321 + i , InfoData.GetHighName(i) );
+				// item IDR_HIGHNAME1 ... IDR_HIGHNAME10
+				WinSetDlgItemShort( hwnd, 331 + i, (USHORT)InfoData.GetHighScore(i),
+										  FALSE);
+				// item IDR_HIGHSCORE1 ... IDR_HIGHSCORE10
+			}
+			break;
+		case WM_COMMAND:
+			switch( SHORT1FROMMP( mp1 ) ){
+				case DID_OK:
+					WinDismissDlg( hwnd, TRUE );
+					return (MRESULT)0; 
+				case IDR_HIGHCLEAR:
+					WinDismissDlg( hwnd, FALSE );
+					return (MRESULT)0;
+			}
+	}
+	return WinDefDlgProc( hwnd, msg, mp1, mp2 );
+}
+
+///////////////////////////////////////////////////////////////////
+// bermuda.h
+
+struct GRAPHICS_PARAMETERS {
+	char Row;
+	char Col;
+	char aktscan;
+	BOOL flag;
+};
+
+extern GRAPHICS_PARAMETERS graphparms;
+
+
+// messages
+
+
+// global variables
+
+extern HAB hab;
+extern HMQ hmq;
+extern HWND hwndFrame;
+extern HWND hwndMain;
+
+extern INFO InfoData;
+extern GRAPHBOARD GBoard;
+
+// Semaphore handles
+extern HEV hevScan;
+extern HEV hevHiScoreWin;
+extern HEV hevScanWait;	// blocks the next scanning until the previous is done
+extern HEV hevSoundWait;
+
+////////////////////////////////////////
+// start of file tgraph.cpp
+// maintains the graphics thread
+// 
+
+// os2 includes
+#define INCL_DOSPROCESS
+#define INCL_DOSSEMAPHORES
+#define INCL_WIN
+#include <os2.h>
+// crt includes
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <process.h>	// _endthread()
+// app includes
+// #include "app.h"
+#include "pmassert.h"
+#include "pmerror.h"
+#include "defs.h"
+#include "tgraph.h"
+#include "game.h"
+#include "pmgame.h"
+#include "info.h"
+#include "bermuda.h"
+#include "mmsound.h"
+
+// global sound variables
+
+// must not call the constructors before MMPM-Support is loaded
+mem_wav *found0,
+		  *foundship,
+		  *found,
+		  *hoch1,
+		  *newhiscore,
+		  *tief1,
+		  *hochtief,
+ 		  *intro;
+
+ 		  
+ 		  
+//----------------------------------------------------------------------
+// thread 2 entry point: gets and dispatches object window messages
+void threadgraph(void *dummy )      // the 1st parameter for _beginthread must be void(*)(void *)
+{
+  BOOL       fSuccess;
+  HAB        hab;
+  HMQ        hmq;
+  QMSG       qmsg;
+
+
+  // thread initialization
+  dummy = NULL;	// to get rid of error messages
+  hab = WinInitialize( 0 );
+  hmq = WinCreateMsgQueue( hab, 0 );
+
+  // prevent system from posting object window a WM_QUIT
+  // I'll post WM_QUIT when it's time.
+  fSuccess = WinCancelShutdown( hmq, TRUE );
+  pmassert( hab, fSuccess );
+
+  fSuccess = WinRegisterClass( hab, APP_CLASS_OBJECT1,
+                  (PFNWP)TGraphWinProc, 0, 0 );
+  pmassert( hab, fSuccess );
+
+  pg->hwndTGraph = WinCreateWindow( HWND_OBJECT, APP_CLASS_OBJECT1, "",
+             0, 0, 0, 0, 0, HWND_OBJECT, HWND_BOTTOM, 0, (PVOID)pg, NULL );
+  pmassert( hab, pg->hwndTGraph );
+
+  // created OK, ack client
+  WinPostMsg( pg->hwndClient, WM_USER_ACK, 0, 0 );
+
+  // get/dispatch messages; user messages, for the most part
+  while( WinGetMsg ( hab, &qmsg, 0, 0, 0 ))
+  {
+    WinDispatchMsg ( hab, &qmsg );
+  }
+
+  // tell client window to quit
+  WinPostMsg( pg->hwndClient, WM_QUIT, 0, 0 );
+
+  // clean up
+  WinDestroyWindow( pg->hwndTGraph );
+  WinDestroyMsgQueue( hmq );
+  WinTerminate( hab );
+  return;
+}
+
+// --------------------------------------------------------------------------
+// object window procedure; mp1 is the window to acknowledge upon completion
+//
+// hwnd is the graphics hwnd, msg is the task to do, mp1 is the hwnd of the
+// ordering window, mp2 is some additional parameter
+
+extern "C"
+MRESULT EXPENTRY TGraphWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
+{
+  HWND          hwndToAck;
+	static HPS hps;
+	RECTL rectl;
+	POINTL ptl;
+	char Row, Col;
+	ULONG ulPC;
+	INT TIME_ON = 100, TIME_OFF = 15;
+
+
+  // store the handle of the window to ack upon task completion;
+	hwndToAck = (HWND)mp1;
+
+  switch( msg ) {
+  case WM_CREATE:
+    // for the create case, mp1 is pointer to globals;
+    // save it in object window words; dependency on WinRegisterClass
+//    pg = (GLOBALS) mp1;
+//    WinSetWindowULong( hwnd, QWL_USER, (ULONG) pg  );
+		hps = WinGetPS( pg->hwndClient );
+MessageWithHMQ("GraphThread creation finished");		
+    return (MRESULT) 0;
+
+	case WM_USER_PAINT:
+		rectl.xLeft = rectl.yBottom = 0;
+		rectl.xRight = GBoard.GetWinWidth();
+		rectl.yTop = GBoard.GetWinHeight();
+		pmassert( hab, hps );
+//		GBoard.ShowPointerPos( hwndToAck, 0, 0 ); // removes the square
+		WinFillRect( hps, &rectl, CLR_WHITE );	// clear background
+		ShowStatusLine( hps, GBoard.MovesNeeded(), InfoData.ShipsNotFound,
+							 GBoard.GetWinWidth(), GBoard.GetWinHeight() );
+		GBoard.DrawPMBoard( hps );
+		GBoard.ClearDrawPoint();	// because no square is drawn right now
+		WinQueryPointerPos( HWND_DESKTOP, &ptl );
+		WinMapWindowPoints( HWND_DESKTOP, hwndToAck, &ptl, 1);
+		GBoard.ShowPointerPos( hwndToAck, hps, ptl.x, ptl.y );
+			// draws square at the current ptr pos
+	   // tell originating window that the task is complete
+    	WinPostMsg( hwndToAck, WM_USER_ACK, (MPARAM) msg, 0 );
+//    	return (MRESULT) 0;
+		break;
+	case WM_GRAPH_SCAN:
+		pmassert( hab, hps );
+		Row = SHORT1FROMMP( mp2 );
+		Col = SHORT2FROMMP( mp2 );
+
+	POINTL left, right, top, bot, lefttop, leftbot, righttop, rightbot, center;
+	GBoard.CalcScanLines( Row, Col, left, right, top, bot, lefttop, leftbot,
+								 righttop, rightbot, center );
+Message( "CalcScanLines ausgefhrt!");								 
+
+	DosResetEventSem( hevScanWait, &ulPC );
+Message(" hevScanWait zurckgesetzt");	
+	DosResetEventSem( hevSoundWait, &ulPC );
+Message(" hevSoundWait zurckgesetzt");	
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, right );	// turns the line on
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, right );	// turns the line off
+	DosSleep( TIME_OFF );
+	WinWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, righttop );
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, righttop );
+	DosSleep( TIME_OFF );
+	DosWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, top );
+	DosSleep(  TIME_ON );
+	GBoard.OneLine( hps, center, top );
+	DosSleep( TIME_OFF );
+	DosWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, lefttop );
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, lefttop );
+	DosSleep( TIME_OFF );
+	DosWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, left );
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, left );
+	DosSleep( TIME_OFF );
+	DosWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, leftbot );
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, leftbot );
+	DosSleep( TIME_OFF );
+	DosWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, bot );
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, bot );
+	DosSleep( TIME_OFF );
+	DosWaitEventSem( hevScanWait, SEM_INDEFINITE_WAIT );
+	DosResetEventSem( hevScanWait, &ulPC );
+	DosResetEventSem( hevSoundWait, &ulPC );
+	WinPostMsg( pg->hwndTSound, WM_SOUND_HOCHTIEF, MPFROMHWND(hwnd), 0 );
+	WinWaitEventSem( hevSoundWait, SEM_INDEFINITE_WAIT );
+	GBoard.OneLine( hps, center, rightbot );
+	DosSleep( TIME_ON );
+	GBoard.OneLine( hps, center, rightbot );
+
+
+//		GBoard.DrawScanLines( hps, Row, Col );
+//		WinReleasePS( hps );
+		DosPostEventSem( hevScan );
+    	WinPostMsg( hwndToAck, WM_USER_ACK, (MPARAM) msg, 0 );
+		break;
+	case WM_DRAWPMPLACE:
+		GBoard.DrawPMPlace( hps, CHAR1FROMMP( mp2 ), CHAR2FROMMP( mp2 ),
+										 CHAR3FROMMP( mp2 ), CHAR4FROMMP( mp2 ) );
+								
+		break;
+	case WM_DRAWPMMARK:
+		GBoard.DrawPMMark( hps, SHORT1FROMMP( mp2 ), SHORT2FROMMP( mp2 ) );
+		break;
+	case WM_SHOWPOINTERPOS:
+		GBoard.ShowPointerPos( hwndToAck, hps, SHORT1FROMMP( mp2 ),
+									  SHORT2FROMMP( mp2 ) );
+		break;									  
+		
+  case WM_USER_SLEEP:
+    // get pointer to globals from window words
+//    pg = (PGLOBALS) WinQueryWindowULong( hwnd, QWL_USER );
+    // sleep as though this were a time-consuming task
+    DosSleep( 20000 );
+ //   DosBeep( 500, 150 );
+    // tell originating window that the task is complete
+   	WinPostMsg( hwndToAck, WM_USER_ACK, (MPARAM) msg, 0 );
+   	return (MRESULT) 0;
+	case WM_DESTROY:
+		WinReleasePS( hps );
+  }
+
+  // default:
+  return WinDefWindowProc( hwnd, msg, mp1, mp2 );
+}
+
+//
+//-----------thread 3 entry point: sound thread
+//  gets and dispatches object window messages
+//
+void threadsound(void *dummy )      // the 1st parameter for _beginthread must be void(*)(void *)
+{
+  BOOL       fSuccess;
+  HAB        hab;
+  HMQ        hmq;
+  QMSG       qmsg;
+
+
+  // thread initialization
+  dummy = NULL;	// to get rid of error messages
+  hab = WinInitialize( 0 );
+  hmq = WinCreateMsgQueue( hab, 0 );
+
+  // prevent system from posting object window a WM_QUIT
+  // I'll post WM_QUIT when it's time.
+  fSuccess = WinCancelShutdown( hmq, TRUE );
+  pmassert( hab, fSuccess );
+
+  fSuccess = WinRegisterClass( hab, APP_CLASS_OBJECT2,
+                  (PFNWP)TSoundWinProc, 0, 0 );
+  pmassert( hab, fSuccess );
+
+  pg->hwndTSound = WinCreateWindow( HWND_OBJECT, APP_CLASS_OBJECT2, "",
+             0, 0, 0, 0, 0, HWND_OBJECT, HWND_BOTTOM, 0, (PVOID)pg, NULL );
+  pmassert( hab, pg->hwndTSound );
+
+  // created OK, ack client
+  WinPostMsg( pg->hwndClient, WM_SOUND_ACK, 0, 0 );
+
+  // get/dispatch messages; user messages, for the most part
+	while( WinGetMsg ( hab, &qmsg, 0, 0, 0 ))
+		WinDispatchMsg ( hab, &qmsg );
+
+  // tell client window to quit
+  WinPostMsg( pg->hwndClient, WM_QUIT, 0, 0 );
+
+  // clean up
+  WinDestroyWindow( pg->hwndTSound );
+  WinDestroyMsgQueue( hmq );
+  WinTerminate( hab );
+  _endthread();	// suggestion taken from edmi 1-2
+}
+
+// --------------------------------------------------------------------------
+// object window procedure; mp1 is the window to acknowledge upon completion
+//
+// hwnd is the graphics hwnd, msg is the task to do, mp1 is the hwnd of the
+// ordering window, mp2 is some additional parameter
+
+extern "C"
+MRESULT EXPENTRY TSoundWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
+{
+  HWND          hwndToAck;
+
+
+  // store the handle of the window to ack upon task completion;
+  hwndToAck = HWNDFROMMP(mp1);
+
+  switch( msg ) {
+  case WM_CREATE:
+    // for the create case, mp1 is pointer to globals;
+    // save it in object window words; dependency on WinRegisterClass
+//    pg = (GLOBALS) mp1;
+//    WinSetWindowULong( hwnd, QWL_USER, (ULONG) pg  );
+		InfoData.SetSoundAvailability( !LoadMMPMSupport() );
+			// LoadMMPMSupport returns FALSE on success
+		if( InfoData.IsSoundAvailable() ){	// now the constructors can be called
+			found0 = new mem_wav("found0.wav", 1);
+			foundship = new mem_wav("found1.wav", 1);
+			found = new mem_wav("found1a.wav", 4);
+			hoch1 = new mem_wav("hoch1.wav", 1);
+			newhiscore = new mem_wav("newhisco.wav", 1);
+			tief1 = new mem_wav("tief1.wav", 1);
+			hochtief = new mem_wav("hochtief.wav", 1);
+ 			intro = new mem_wav("intro2.wav", 1);
+ 		}
+	
+		WinPostMsg( pg->hwndTSound, WM_SOUND_INTRO, MPFROMHWND(hwnd), 0 );
+    return (MRESULT) 0;
+
+	case WM_DESTROY:
+		if( InfoData.IsSoundAvailable() ) FreeMMPMSupport();
+		break;
+	case WM_SOUND_INTRO:
+//		PlaySound( intro, InfoData.GetSound() );
+ 
+	   // tell originating window that the task is complete
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+//		break;
+
+
+	case WM_SOUND_FOUND0:
+		WinWaitEventSem( hevScan, SEM_INDEFINITE_WAIT );
+			// wait till scanning is done
+      PlaySound( found0, InfoData.GetSound() );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+	case WM_SOUND_FOUNDSHIP:
+		WinWaitEventSem( hevScan, SEM_INDEFINITE_WAIT );
+      PlaySound( foundship, InfoData.GetSound() );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+	case WM_SOUND_FOUND:
+//		  found("found1a.wav", 4), Achtung!
+		WinWaitEventSem( hevScan, SEM_INDEFINITE_WAIT );
+      PlaySound( &((*found)(LONGFROMMP(mp2)) ), InfoData.GetSound() );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+	case WM_SOUND_HOCH1:
+      PlaySound( hoch1, InfoData.GetSound() );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+	case WM_SOUND_HOCHTIEF:
+    	DosPostEventSem( hevSoundWait );
+      PlaySound( hochtief, InfoData.GetSound() );
+    	DosPostEventSem( hevScanWait );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+	case WM_SOUND_NEWHISCORE:
+		DosPostEventSem( hevHiScoreWin ); // posts the sem so that the
+			// HiScore dialog window can be displayed
+      PlaySound( newhiscore, InfoData.GetSound() );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+	case WM_SOUND_TIEF1:
+      PlaySound( tief1, InfoData.GetSound() );
+    	WinPostMsg( hwndToAck, WM_SOUND_ACK, (MPARAM) msg, 0 );
+    	return (MRESULT) 0;
+		
+  case WM_USER_SLEEP:
+    // get pointer to globals from window words
+//    pg = (PGLOBALS) WinQueryWindowULong( hwnd, QWL_USER );
+    // sleep as though this were a time-consuming task
+    DosSleep( 20000 );
+ //   DosBeep( 500, 150 );
+    // tell originating window that the task is complete
+    WinPostMsg( hwndToAck, WM_USER_ACK, (MPARAM) msg, 0 );
+    return (MRESULT) 0;
+  }
+
+  // default:
+  return WinDefWindowProc( hwnd, msg, mp1, mp2 );
+}
+
+///////////////////////////////
+// start of file tgraph.h -------------------------------------------------------
+
+// strings
+#define APP_CLASS_CLIENT        "APPClient"
+#define APP_CLASS_OBJECT1        "APPObjectGph"
+#define APP_CLASS_OBJECT2        "APPObjectSnd"
+
+// identifiers
+#define ID_APP             3
+#define IDM_SLEEP         303
+#define IDM_ACTIONS       304
+
+// lengths
+#define LEN_WORKSTRING              256
+#define LEN_STACK                 18000
+
+// structure to hold globals variables common to both threads
+struct GLOBALS {
+  BOOL           fPainting;
+  HAB            hab;
+  HWND           hwndClient;
+  HWND           hwndFrame;
+  HWND           hwndTitlebar;
+  HWND           hwndMenubar;
+  HWND           hwndTGraph;
+  TID            tidTGraph;
+  HWND			  hwndTSound;
+  TID				  tidTSound;
+};
+
+extern GLOBALS *pg;
+
+// user-defined messages for work items and acknowlegements
+#define WM_USER_ACK                    (WM_USER+0)
+#define WM_USER_SLEEP                  (WM_USER+1)
+#define WM_USER_ENABLE                 (WM_USER+2)
+#define WM_USER_DISABLE                (WM_USER+3)
+#define WM_USER_PAINT						(WM_USER+4)
+#define WM_SOUND_ACK                   (WM_USER+5)
+#define WM_SOUND_INTRO                 (WM_USER+6)
+#define WM_SOUND_FOUND0						(WM_USER+7)
+#define WM_SOUND_FOUNDSHIP					(WM_USER+8)
+#define WM_SOUND_FOUND						(WM_USER+9)
+#define WM_SOUND_HOCH1						(WM_USER+10)
+#define WM_SOUND_NEWHISCORE				(WM_USER+11)
+#define WM_SOUND_TIEF1						(WM_USER+12)
+#define WM_SOUND_HOCHTIEF					(WM_USER+14)
+
+#define WM_GRAPH_SCAN						(WM_USER+100)
+#define WM_DRAWPMPLACE						(WM_USER+101)
+#define WM_DRAWPMMARK						(WM_USER+102)
+#define WM_SHOWPOINTERPOS					(WM_USER+103)
+
+
+
+// function prototypes 
+void threadgraph(void *);   // ge„ndert von nichts auf void *
+void threadsound(void *);   // ge„ndert von nichts auf void *
+GLOBALS *Create( HWND hwnd );
+extern "C"
+MRESULT EXPENTRY TGraphWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern "C"
+MRESULT EXPENTRY TSoundWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+// MRESULT EXPENTRY ClientWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+
+// end of file tgraph.h ----------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////
+//		graphics functions: pmgame.cpp
+
+
+#define INCL_WIN
+#define INCL_GPI
+#define INCL_DOSPROCESS
+#include <os2.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>     // for strcpy() from info.h
+
+#include "pmassert.h"
+#include "game.h"
+#include "defs.h"
+#include "info.h"
+#include "pmgame.h"
+#include "bermuda.h"
+
+// private functions:
+
+VOID GRAPHBOARD::OneLine( const HPS hps, POINTL from, POINTL to )
+{
+	POINTL fromLeftTop, fromRightBot, fromRightTop, toLeftTop, toRightBot,
+			toRightTop;
+	const CHAR CenterOffset = 1, PointDist = 2;		// 1 and 2
+
+	// from and to really are fromLeftBot and toLeftBot
+	from.x -= CenterOffset;
+	fromLeftTop.x = from.x;
+	from.y -= CenterOffset;
+	fromRightBot.y = from.y;
+	to.x -= CenterOffset;
+	toLeftTop.x = to.x;
+	to.y -= CenterOffset;
+	toRightBot.y = to.y;	
+	fromRightTop.y = fromLeftTop.y = from.y + PointDist;
+	fromRightTop.x = fromRightBot.x = from.x + PointDist;
+	toRightTop.y = toLeftTop.y = to.y + PointDist;
+	toRightTop.x = toRightBot.x = to.x + PointDist;
+
+	if( (from.x < to.x && from.y < to.y )
+		|| ( from.x > to.x && from.y > to.y ) ){
+				// if the diagonal is painted from lower left to upper right,
+				// do an exchange from <-> fromLeftTop and to <-> toLeftTop.
+				// this is necessary for nicer painting
+				// so in this case from is fromLeftTop and fromLeftTop is fromLeftBot
+		from.x += PointDist;
+		fromRightBot.x -= PointDist;
+		to.x += PointDist;
+		toRightBot.x -= PointDist;
+	}
+
+	GpiBeginPath( hps, 1L );
+	GpiMove( hps, &from );
+	GpiLine( hps, &to );
+	GpiLine( hps, &toRightBot );
+	GpiLine( hps, &fromRightBot );
+	GpiLine( hps, &from );
+	GpiLine( hps, &to );
+	GpiLine( hps, &toRightTop );
+	GpiLine( hps, &fromRightTop );
+	GpiLine( hps, &from );
+	GpiLine( hps, &to );
+	GpiLine( hps, &toLeftTop );
+	GpiLine( hps, &fromLeftTop );
+	GpiLine( hps, &from );
+	GpiEndPath( hps );
+	GpiSetColor( hps, CLR_BLUE );
+	GpiSetMix( hps, FM_XOR );
+	GpiFillPath ( hps, 1L, FPATH_WINDING );
+//	GpiFillPath ( hps, 1L, FPATH_ALTERNATE );
+}
+
+// public functions:
+GRAPHBOARD::GRAPHBOARD( char Row, char Col )    // default values defined in pmgame.h
+: BOARD( Row, Col )
+{
+	fDrag = FALSE;
+	fShowLines = FALSE;
+	FirstDraw = TRUE;
+} 
+
+
+
+VOID GRAPHBOARD::SetPMBoardValues( const short Width, const short Height )
+{
+	WinSizeX = Width;		
+	WinSizeY = Height - 30;	// 30 pel needed to show the status line
+	int dx = WinSizeX / (Columns - 1);		// distance in x- and y-direction
+	int dy = WinSizeY / (Rows - 1);
+	dist = dx < dy ? dx : dy;
+	dx = WinSizeX - (Columns - 3) * dist;	// border at both sides
+	dy = WinSizeY - (Rows - 3) * dist;
+	LowerLeftPlace.x = dx / 2;		// offset from the window's edge
+	LowerLeftPlace.y = dy / 2;
+}
+
+VOID GRAPHBOARD::DrawPMBoard( const HPS hps )
+{
+	POINTL StartHor = LowerLeftPlace;
+	POINTL EndHor;
+	POINTL StartVert = LowerLeftPlace;
+	POINTL EndVert;
+	int Value;
+	
+	EndHor.x = StartHor.x + (Columns - 3) * dist;	// shown cols = Columns - 2
+	EndHor.y = StartHor.y;
+	EndVert.x = StartVert.x;
+	EndVert.y = StartVert.y + (Rows - 3) * dist;
+
+	GpiSetColor( hps, CLR_BLACK );
+	GpiSetLineType( hps, LINETYPE_SOLID );
+	GpiSetLineWidth( hps, LINEWIDTH_NORMAL );
+
+
+	if( !InfoData.IsLineStyle(IDC_DIAGONALS) ){
+		// first we paint the horizontal lines:
+		for( ; StartHor.y <= EndVert.y; StartHor.y += dist, EndHor.y += dist ){
+			GpiMove( hps, &StartHor );
+			GpiLine( hps, &EndHor );
+		}
+		// then the vertical lines:
+		for(; StartVert.x <= EndHor.x; StartVert.x += dist, EndVert.x += dist ){
+			GpiMove( hps, &StartVert );
+			GpiLine( hps, &EndVert );
+		}
+	}	// end if !InfoData.IsLineStyle( IDC_DIAGONALS )
+
+	if( !InfoData.IsLineStyle(IDC_VERTICALS) ){
+		// there are still some diagonals left:
+		// Start... draw from left top to right bottom
+		GpiSetLineType( hps, LINETYPE_DOT );
+		StartVert.x = LowerLeftPlace.x;
+		StartVert.y = LowerLeftPlace.y + dist;
+		StartHor.x = LowerLeftPlace.x + dist;
+		StartHor.y = LowerLeftPlace.y;
+
+		// End... draw from right top to left bottom
+		EndVert.x = LowerLeftPlace.x + ( Columns - 3) * dist;
+		EndVert.y = LowerLeftPlace.y + dist;
+		EndHor.x = LowerLeftPlace.x + ( Columns - 4) * dist;
+		EndHor.y = LowerLeftPlace.y;
+		
+		int VertBreak = 0;
+		int HorBreak = 0;
+		while( StartVert.x != StartHor.x || StartVert.y != StartHor.y )
+		{
+			GpiMove( hps, &StartHor );
+			GpiLine( hps, &StartVert );
+			GpiMove( hps, &EndHor );
+			GpiLine( hps, &EndVert );
+			if( VertBreak ){
+				StartVert.x += dist;
+				EndVert.x -= dist;
+			} else {
+				StartVert.y += dist;
+				EndVert.y += dist;
+				if( StartVert.y == LowerLeftPlace.y + (Rows - 3)*dist)
+					VertBreak = 1;
+			}
+			if( HorBreak ){
+				StartHor.y += dist;
+				EndHor.y += dist;
+			} else {
+				StartHor.x += dist;
+				EndHor.x -= dist;
+				if( StartHor.x == LowerLeftPlace.x + (Columns - 3 ) * dist )
+					HorBreak = 1;
+			}
+		}	
+	}	// end if !InfoData.IsLineStyle( IDC_VERTICALS )
+	
+	// now we insert the values that have already been discovered
+	for( int i = 1; i < Rows - 1; i++ )
+		for( int j = 1; j < Columns - 1; j++ ){
+			if( (Value = GetDiscovered( i, j) ) != -1 )
+				DrawPMPlace( hps, i, j, Value, FALSE );
+//			if( GetMarked( i, j ) ){
+				ToggleMarked( i, j );
+				DrawPMMark( hps, i, j );
+//			}
+		}
+}
+
+VOID GRAPHBOARD::DrawPMPlace( const HPS hps, const char Row,
+										const char Col, INT Value,
+										const BOOL fSwap )
+{
+	POINTL Point;
+	ULONG Bitmap;
+	HBITMAP hbm;
+
+	Point.x = LowerLeftPlace.x + (Col - 1)*dist - dist/3;
+	Point.y = LowerLeftPlace.y + (Row - 1)*dist - dist/3;
+	if( !fSwap ){
+		if( Value >= 50 ) Value -= 50;
+		else if(Value <= 4 ) Value += 50;
+	}
+								// fSwap indicates if a number
+								// will be swapped into a circle or vice versa
+	if ( Value >= 50 ) {	// a number has already been found and will be
+								// replaced by a circle now
+		Bitmap = BMP_FCIRCLE;
+		SetDiscovered( Row, Col, Value - 50 );
+	} else {
+		switch( Value ){
+			case 0: Bitmap = BMP_F0; break;
+			case 1: Bitmap = BMP_F1; break;
+			case 2: Bitmap = BMP_F2; break;
+			case 3: Bitmap = BMP_F3; break;
+			case 4: Bitmap = BMP_F4; break;
+			default: Bitmap = BMP_SHIP;
+		}
+		if( Value != GetShipNumber() + 10 )
+			SetDiscovered( Row, Col, Value + 50 );
+	}
+	hbm = GpiLoadBitmap( hps, (HMODULE)NULL, Bitmap, dist*2/3, dist*2/3);
+//	if( hbm == NULLHANDLE ) DosBeep( 500, 150 );
+	pmassert( hab, hbm );
+//	if( !(WinDrawBitmap( hps, hbm, NULL, &Point, 0, 0, DBM_NORMAL ) ))
+//		DosBeep( 1000, 150 );
+pmassert( hab, (WinDrawBitmap(hps, hbm, NULL, &Point, 0, 0, DBM_NORMAL)) );
+	GpiDeleteBitmap( hbm );		// releases the bitmap-handle
+}
+
+VOID GRAPHBOARD::DrawPMMark( const HPS hps, const char Row, const char Col )
+{
+	POINTL Point;
+	ULONG Bitmap;
+	HBITMAP hbm;
+
+	if( GetDiscovered( Row, Col ) != -1 ) return;
+	if( GetMarked( Row, Col ) ) Bitmap = BMP_UNMARK;
+	else Bitmap = BMP_MARK;
+	Point.x = LowerLeftPlace.x + (Col - 1)*dist - dist/6;
+	Point.y = LowerLeftPlace.y + (Row - 1)*dist - dist/6;
+	hbm = GpiLoadBitmap( hps, (HMODULE)NULL, Bitmap, dist/3, dist/3);
+//	if( hbm == NULLHANDLE ) DosBeep( 500, 150 );
+	pmassert( hab, hbm );
+//	if( !(WinDrawBitmap( hps, hbm, NULL, &Point, 0, 0, DBM_NORMAL ) ))
+//		DosBeep( 1000, 150 );
+pmassert( hab, (WinDrawBitmap(hps, hbm, NULL, &Point, 0, 0, DBM_NORMAL)) );
+	GpiDeleteBitmap( hbm );		// releases the bitmap-handle
+	ToggleMarked( Row, Col );
+}
+	
+	
+
+
+char GRAPHBOARD::GetBoardCol( LONG ptrx )
+{
+	ptrx += dist / 2;
+	if( (ptrx -= LowerLeftPlace.x) < 0 ) return 0; // ptrx = 0;
+	if( (ptrx /= dist) > (Columns - 3) ) return 0; // ptrx = Columns - 3;
+	return ptrx + 1;
+}
+	
+char GRAPHBOARD::GetBoardRow(	LONG ptry )
+{
+	ptry += dist / 2;
+	if( (ptry -= LowerLeftPlace.y) < 0 ) return 0; //ptry = 0;
+	if( (ptry /= dist) > (Rows - 3) ) return 0; //ptry = Rows - 3;
+	return ptry + 1;
+}
+
+
+VOID GRAPHBOARD::DrawDragLine( const HWND hwnd, const char BeginRow,
+								 const char BeginCol, POINTL ptl )
+{
+	int NewLengthX = 0, NewLengthY = 0;
+	POINTL NewDrawPoint;
+	POINTL BeginPoint;
+	DIRECTION NewDrawDir;
+	HPS hps;
+
+	BeginPoint.x = NewDrawPoint.x = LowerLeftPlace.x + (BeginCol -1)*dist;
+	BeginPoint.y = NewDrawPoint.y = LowerLeftPlace.y + (BeginRow - 1)*dist;
+	if( FirstDraw ){
+		DrawPoint.x = BeginPoint.x ;
+		DrawPoint.y = BeginPoint.y;
+		FirstDraw = FALSE;
+	}
+
+	int XOffset = ptl.x - BeginPoint.x;
+	int YOffset = ptl.y - BeginPoint.y;
+	double help = double(XOffset);
+	if( help == 0 ) help = 0.001;
+	double Quot = YOffset / help;
+	if( Quot < 0 ) Quot = -Quot;
+
+	if( Quot < 0.5 )
+		NewLengthX = XOffset;
+	else 
+		if( Quot < 1 )	{
+			NewLengthX = NewLengthY = YOffset;
+			if( (YOffset > 0 && XOffset < 0) || (YOffset < 0 && XOffset > 0) )
+				NewLengthX = - NewLengthX;
+		}
+		else
+			if( Quot < 2 ){
+				NewLengthX = NewLengthY = XOffset;
+				if( (YOffset > 0 && XOffset < 0) || (YOffset < 0 && XOffset > 0) )
+					NewLengthY = - NewLengthY;
+			}
+			else
+				NewLengthY = YOffset;
+
+	if( NewLengthX >= 0 )
+		NewLengthX += dist/2;
+	else	
+		NewLengthX -= dist/2;
+
+	if( NewLengthY >= 0 )
+		NewLengthY += dist/2;
+	else	
+		NewLengthY -= dist/2;
+
+	NewLengthX /= dist;
+	NewLengthY /= dist;	
+
+	NewDrawPoint.x += NewLengthX * dist;
+	NewDrawPoint.y += NewLengthY * dist;
+
+	if( DrawPoint.y == NewDrawPoint.y && NewDrawPoint.x == DrawPoint.x  ) return;
+
+	if( NewDrawPoint.x < LowerLeftPlace.x
+	 || NewDrawPoint.y < LowerLeftPlace.y 
+	 || NewDrawPoint.x > LowerLeftPlace.x + (Columns - 3) * dist 
+	 || NewDrawPoint.y > LowerLeftPlace.y + (Rows - 3) * dist )
+	 	NewDrawPoint = BeginPoint;
+	
+	hps = WinGetPS( hwnd );
+	OneLine( hps, BeginPoint, DrawPoint );
+	OneLine( hps, BeginPoint, NewDrawPoint );
+//	GpiSetColor( hps, CLR_BLUE );
+//	GpiSetMix( hps, FM_XOR );
+//	GpiSetLineWidth( hps, LINEWIDTH_THICK );
+//	GpiMove( hps, &DrawPoint );
+//	GpiLine( hps, &BeginPoint );
+//	GpiLine( hps, &NewDrawPoint );
+	WinReleasePS( hps );
+	DrawDir = NewDrawDir;
+	DrawPoint = NewDrawPoint;
+}
+
+
+				
+VOID GRAPHBOARD::MarkDragLine( const HWND hwnd,
+						const char BeginRow, const char BeginCol )
+{
+	char EndRow, EndCol;
+	INT dx, dy;
+	HPS hps;
+	POINTL BeginPoint;
+
+
+	BeginPoint.x = LowerLeftPlace.x + (BeginCol -1)*dist;
+	BeginPoint.y = LowerLeftPlace.y + (BeginRow - 1)*dist;
+	EndRow = GetBoardRow( DrawPoint.y );
+	EndCol = GetBoardCol( DrawPoint.x );
+
+	dx = EndCol - BeginCol;
+	if ( dx )
+		if ( dx > 0 ) dx = 1;
+		else dx = -1;
+
+	dy = EndRow - BeginRow;
+	if( dy )
+		if( dy > 0 ) dy = 1;
+		else dy = -1;
+	hps = WinGetPS( hwnd );
+
+	OneLine( hps, BeginPoint, DrawPoint );
+//	GpiSetColor( hps, CLR_BLUE );
+//	GpiSetMix( hps, FM_XOR );
+//	GpiSetLineWidth( hps, LINEWIDTH_THICK );
+//	GpiMove( hps, &DrawPoint );
+//	GpiLine( hps, &BeginPoint );
+//	GpiSetMix( hps, FM_DEFAULT );	
+	
+	while( EndRow != BeginRow || EndCol != BeginCol ){
+		if( !GetMarked( EndRow, EndCol) )
+			DrawPMMark( hps, EndRow, EndCol );
+		EndRow -= dy;
+		EndCol -= dx;
+	}
+	if( !GetMarked( EndRow, EndCol) )
+		DrawPMMark( hps, EndRow, EndCol );
+
+	WinReleasePS( hps );
+}
+
+/////////////////////////////////////////////////////////////////
+// this function is called at any mousemove. If the pointer has
+// moved from one place to another, the function removes the square
+// at the old position, adjusts DrawPoint and draws a new square.
+// If the help lines are visible, this function also turns them off.
+	
+VOID GRAPHBOARD::ShowPointerPos( HWND hwnd, HPS hps, SHORT ptx, SHORT pty )
+{
+	POINTL Point;
+
+	Point.x = LowerLeftPlace.x + (GetBoardCol( ptx ) - 1) * dist;
+	Point.y = LowerLeftPlace.y + (GetBoardRow( pty ) - 1) * dist;
+	if( Point.x == DrawPoint.x && Point.y == DrawPoint.y ) return;
+		// nothing to do
+
+	if( GetfShowLines() ){	// if the help lines were visible, turn them off
+		SetfShowLines( FALSE );
+		DisplayLines( hwnd );
+	}
+
+	GpiSetMix( hps, FM_XOR );
+	GpiSetColor( hps, CLR_DARKGRAY );
+	if( DrawPoint.x >= LowerLeftPlace.x && DrawPoint.y >= LowerLeftPlace.y ) {
+		// there exists a visible square that must be removed
+		DrawPoint.x -= dist / 3;
+		DrawPoint.y -= dist / 3;
+		GpiMove( hps, &DrawPoint );
+		DrawPoint.x += 2 * dist / 3;
+		DrawPoint.y += 2 * dist / 3;
+		GpiBox( hps, DRO_OUTLINEFILL, &DrawPoint, 0, 0 );
+
+	}
+	DrawPoint.x = Point.x;	// DrawPoint is set to the new point
+	DrawPoint.y = Point.y;
+	if( Point.x >= LowerLeftPlace.x && Point.y >= LowerLeftPlace.y ){
+		// neither GetBoardCol nor GetBoardRow returned 0 => point is visible
+		Point.x -= dist / 3;
+		Point.y -= dist / 3;
+		GpiMove( hps, &Point );
+		Point.x += 2 * dist / 3;
+		Point.y += 2 * dist / 3;
+		GpiBox( hps, DRO_OUTLINEFILL, &Point, 0, 0 );
+	}
+	GpiSetMix( hps, FM_OVERPAINT );
+}
+	
+
+VOID GRAPHBOARD::DisplayLines( const HWND hwnd )
+{
+	HPS hps;
+	POINTL P1, P2;
+	INT BorderDist;
+	INT Row, Col;
+
+
+	Row = GetBoardRow( DrawPoint.y );
+	Col = GetBoardCol( DrawPoint.x );
+	if( !Row || !Col ) return; 	// cursor is outside the gameboard
+
+	hps = WinGetPS( hwnd );
+	// left to right line:
+	P1.x = LowerLeftPlace.x;			// left edge
+	P2.x = LowerLeftPlace.x + (Columns - 3)*dist;	// right edge
+	P1.y = P2.y = LowerLeftPlace.y + (Row - 1)*dist;	// same height as DrawPoint
+	OneLine( hps, P1, P2 );
+	// bottom to top line:
+	P1.x = P2.x = LowerLeftPlace.x + (Col - 1)*dist;
+	P1.y = LowerLeftPlace.y;
+	P2.y = LowerLeftPlace.y + (Rows - 3)*dist;
+	OneLine( hps, P1, P2 );
+	// left bottom to right top line:
+	BorderDist = Row < Col ? Row : Col;
+	P1.x = LowerLeftPlace.x + ( Col - BorderDist )*dist;
+	P1.y = LowerLeftPlace.y + ( Row - BorderDist )*dist;
+	BorderDist = ( Rows - 3 - Row ) < (Columns - 3 - Col ) ?
+					 ( Rows - 3 - Row ) : (Columns - 3 - Col );
+	P2.x = LowerLeftPlace.x + ( Col + BorderDist )*dist;
+	P2.y = LowerLeftPlace.y + ( Row + BorderDist )*dist;
+	OneLine( hps, P1, P2 );
+	// right bottom to left top line:
+	BorderDist = (Row )  < (Columns - 1 - Col ) ?
+					 (Row ) : (Columns - 1 - Col );
+	P1.x = LowerLeftPlace.x + ( Col + BorderDist - 2 )*dist;
+	P1.y = LowerLeftPlace.y + ( Row - BorderDist )*dist;
+	BorderDist = ( Rows - 1 - Row ) < (Col )  ?
+					 ( Rows - 1 - Row ) : (Col );
+	P2.x = LowerLeftPlace.x + ( Col - BorderDist )*dist;
+	P2.y = LowerLeftPlace.y + ( Row + BorderDist - 2 )*dist;
+	
+	OneLine( hps, P1, P2 );
+
+	WinReleasePS( hps );
+}
+
+VOID GRAPHBOARD::DrawScanLines( const HPS hps, const INT Row, const INT Col )
+// vorher HWND
+{
+	POINTL left, right, top, bot, lefttop, leftbot, righttop, rightbot, center;
+	INT BorderDist;
+
+	center.x = LowerLeftPlace.x + ( Col - 1) * dist;
+	center.y = LowerLeftPlace.y + (Row - 1) * dist;
+
+	// left to right line:
+	left.x = LowerLeftPlace.x;			// left edge
+	right.x = LowerLeftPlace.x + (Columns - 3)*dist;	// right edge
+	left.y = right.y = LowerLeftPlace.y + (Row - 1)*dist;	// same height as DrawPoint
+	// bottom to top line:
+	bot.x = top.x = LowerLeftPlace.x + (Col - 1)*dist;
+	bot.y = LowerLeftPlace.y;
+	top.y = LowerLeftPlace.y + (Rows - 3)*dist;
+	// left bottom to right top line:
+	BorderDist = Row < Col ? Row : Col;
+	leftbot.x = LowerLeftPlace.x + ( Col - BorderDist )*dist;
+	leftbot.y = LowerLeftPlace.y + ( Row - BorderDist )*dist;
+	BorderDist = ( Rows - 3 - Row ) < (Columns - 3 - Col ) ?
+					 ( Rows - 3 - Row ) : (Columns - 3 - Col );
+	righttop.x = LowerLeftPlace.x + ( Col + BorderDist )*dist;
+	righttop.y = LowerLeftPlace.y + ( Row + BorderDist )*dist;
+	// right bottom to left top line:
+	BorderDist = (Row )  < (Columns - 1 - Col ) ?
+					 (Row ) : (Columns - 1 - Col );
+	rightbot.x = LowerLeftPlace.x + ( Col + BorderDist - 2 )*dist;
+	rightbot.y = LowerLeftPlace.y + ( Row - BorderDist )*dist;
+	BorderDist = ( Rows - 1 - Row ) < (Col )  ?
+					 ( Rows - 1 - Row ) : (Col );
+	lefttop.x = LowerLeftPlace.x + ( Col - BorderDist )*dist;
+	lefttop.y = LowerLeftPlace.y + ( Row + BorderDist - 2 )*dist;
+	
+	OneLine( hps, center, right );
+	DosSleep( 50 );
+	OneLine( hps, center, right );
+	DosSleep( 50 );
+	OneLine( hps, center, righttop );
+	DosSleep( 50 );
+	OneLine( hps, center, righttop );
+	DosSleep( 50 );
+	OneLine( hps, center, top );
+	DosSleep( 50 );
+	OneLine( hps, center, top );
+	DosSleep( 50 );
+	OneLine( hps, center, lefttop );
+	DosSleep( 50 );
+	OneLine( hps, center, lefttop );
+	DosSleep( 50 );
+	OneLine( hps, center, left );
+	DosSleep( 50 );
+	OneLine( hps, center, left );
+	DosSleep( 50 );
+	OneLine( hps, center, leftbot );
+	DosSleep( 50 );
+	OneLine( hps, center, leftbot );
+	DosSleep( 50 );
+	OneLine( hps, center, bot );
+	DosSleep( 50 );
+	OneLine( hps, center, bot );
+	DosSleep( 50 );
+	OneLine( hps, center, rightbot );
+	DosSleep( 50 );
+	OneLine( hps, center, rightbot );
+
+}
+
+VOID ShowStatusLine( const HPS hps, const char Moves,
+							const char Ships, const LONG Width,
+							const LONG Height )
+{
+	RECTL Rect = { 0, Height, Width, Height + 30 };
+	POINTL Point = { Width, Height };
+	CHAR text[256];
+ 
+	WinFillRect( hps, &Rect, SYSCLR_WINDOW );	// clear background
+	GpiSetColor( hps, CLR_BLACK );
+	GpiSetLineType( hps, LINETYPE_SHORTDASH );
+	GpiSetLineWidth( hps, LINEWIDTH_NORMAL );
+	GpiSetMix( hps, FM_OVERPAINT );
+	GpiMove( hps, &Point );
+	Point.x = 0;
+	GpiLine( hps, &Point );
+	Point.x += 10;
+	Point.y += 10;
+	GpiMove( hps, &Point );
+	if( Ships )
+		sprintf( text, "%d %s made     %d %s still lost", Moves,
+			Moves == 1 ? "move" : "moves", Ships, Ships == 1 ? "ship" : "ships" );
+	else
+		sprintf( text, "%d %s made     All ships found", Moves,
+			Moves == 1 ? "move" : "moves" );
+
+	GpiCharString( hps, strlen(text), text );
+} 
+	
+
+VOID GRAPHBOARD::CalcScanLines( char Row, char Col, POINTL &left, POINTL &right,
+									POINTL &top, POINTL &bot, POINTL &lefttop,
+									POINTL &leftbot, POINTL &righttop,
+									POINTL &rightbot, POINTL &center )
+{										
+
+	INT BorderDist;
+
+	center.x = LowerLeftPlace.x + ( Col - 1) * dist;
+	center.y = LowerLeftPlace.y + (Row - 1) * dist;
+
+	// left to right line:
+	left.x = LowerLeftPlace.x;			// left edge
+	right.x = LowerLeftPlace.x + (Columns - 3)*dist;	// right edge
+	left.y = right.y = LowerLeftPlace.y + (Row - 1)*dist;	// same height as DrawPoint
+	// bottom to top line:
+	bot.x = top.x = LowerLeftPlace.x + (Col - 1)*dist;
+	bot.y = LowerLeftPlace.y;
+	top.y = LowerLeftPlace.y + (Rows - 3)*dist;
+	// left bottom to right top line:
+	BorderDist = Row < Col ? Row : Col;
+	leftbot.x = LowerLeftPlace.x + ( Col - BorderDist )*dist;
+	leftbot.y = LowerLeftPlace.y + ( Row - BorderDist )*dist;
+	BorderDist = ( Rows - 3 - Row ) < (Columns - 3 - Col ) ?
+					 ( Rows - 3 - Row ) : (Columns - 3 - Col );
+	righttop.x = LowerLeftPlace.x + ( Col + BorderDist )*dist;
+	righttop.y = LowerLeftPlace.y + ( Row + BorderDist )*dist;
+	// right bottom to left top line:
+	BorderDist = (Row )  < (Columns - 1 - Col ) ?
+					 (Row ) : (Columns - 1 - Col );
+	rightbot.x = LowerLeftPlace.x + ( Col + BorderDist - 2 )*dist;
+	rightbot.y = LowerLeftPlace.y + ( Row - BorderDist )*dist;
+	BorderDist = ( Rows - 1 - Row ) < (Col )  ?
+					 ( Rows - 1 - Row ) : (Col );
+	lefttop.x = LowerLeftPlace.x + ( Col - BorderDist )*dist;
+	lefttop.y = LowerLeftPlace.y + ( Row + BorderDist - 2 )*dist;
+}
+
+//////////////////////////////////////////////////////////////////////
+//		pmgame.h
+
+class GRAPHBOARD : public BOARD {
+		int dist;		// distance between two places in pels
+		POINTL LowerLeftPlace;	// Position of Place[1][1] in the window
+		int WinSizeX;		// size of the window in pels
+		int WinSizeY;
+		BOOL fDrag;				// for the drag painting:
+		DIRECTION DrawDir;		
+		POINTL DrawPoint;
+		BOOL FirstDraw;
+		BOOL fShowLines;
+	public:
+		VOID OneLine( const HPS hps, POINTL from, POINTL to );
+		int GetWinWidth() { return WinSizeX; }
+		int GetWinHeight() { return WinSizeY; }
+		GRAPHBOARD( char Row = 9, char Col = 20 );
+		VOID SetPMBoardValues( const short Width, const short Height );
+		VOID DrawPMBoard( const HPS hps );
+		VOID DrawPMPlace( const HPS hps, const char Row,
+										const char Col, INT Value, const BOOL fSwap );
+		VOID DrawPMMark( const HPS hps, const char Row, const char Col );
+		char GetBoardCol( LONG ptrx );
+		char GetBoardRow(	LONG ptry );
+		VOID SetfDrag( BOOL Status ){ fDrag = Status; }
+		BOOL GetfDrag() { return fDrag; }
+		VOID SetfShowLines( BOOL Status ){ fShowLines = Status; }
+		BOOL GetfShowLines() { return fShowLines; }
+		VOID DrawDragLine( const HWND hwnd, const char BeginRow,
+								 const char BeginCol, POINTL ptl );
+		VOID MarkDragLine( const HWND hwnd,
+								 const char BeginRow, const char BeginCol );
+		VOID ResetFirstDraw() { FirstDraw = TRUE; }						 
+		VOID DisplayLines( const HWND hwnd );
+		VOID DrawScanLines( const HPS hps, const INT Row, const INT Col );
+		VOID ClearDrawPoint() { DrawPoint.x = 0; DrawPoint.y = 0; }
+		VOID ShowPointerPos( HWND hwnd, HPS hps, SHORT ptx, SHORT pty );
+		VOID CalcScanLines( char Row, char Col, POINTL &left, POINTL &right,
+									POINTL &top, POINTL &bot, POINTL &lefttop,
+									POINTL &leftbot, POINTL &righttop,
+									POINTL &rightbot, POINTL &center );
+
+
+};
+
+VOID ShowStatusLine( const HPS hps, const char Moves,
+							const char Ships, const LONG Width,
+							const LONG Height );
+

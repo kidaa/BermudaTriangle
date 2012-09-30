@@ -1,0 +1,356 @@
+... ein kleines Strategiespiel
+
+ Ziel des Spieles 
+
+Ziel ist es, vier auf dem Spielfeld verlorengegangene havarierte
+Sonden in m”glichst wenig Zgen zu finden und retten. Ein Zug
+besteht daraus, dass man erst versucht, durch eine Art
+Kreuzpeilung den Ort der Sonde zu ermitteln und dann ein
+Rettungsshiff zu diesem Ort schickt. Befindet sich an diesem Ort
+keine der gesuchten Sonden, so sendet das Rettungsschiff Angaben
+darber zurck, wieviele Sonden es von diesem Ort aus sieht.
+Diese Daten gilt es dann m”glichst geschickt auszuwerten. 
+
+Voraussetzungen 
+
+Da dieses Spiel speziell fr den Rechner meiner Freundin (siehe
+Punkt XMasWare - Was ist das?) geschrieben wurde, welcher nun
+zuf„llig ein Mac LC mit 16 Graustufen und System 7 ist, gelten
+folgende Mindestvoraussetzungen:
+
+- 16 Graustufen (4 Bit)
+
+- System 7
+
+- 4 Megabytes RAM
+
+- 68020 Prozessor
+
+Geeignet ist das Spiel also fr Mac LC, SE30, Classic II, Mac
+II, IIcx, IIci, IIfx, Quadra. 
+
+Die Schwarz-Weiss-Version (Galaxis b/w) l„uft auf allen Macs,
+auf denen System 7 l„uft. 
+
+
+
+Wie spiele ich Galaxis 
+
+Das Spielfeld 
+
+Das Spielfeld besteht aus einem Gitter von 20 (horizontal) mal 9
+(vertikal) Punkten. Auf jedem dieser Punkte kann sich eine der
+vermissten Sonden befinden. Zu Anfang hat man keinerlei
+Informationen ber die m”glichen Aufenthaltsorte. Jedoch gewinnt
+man mit jedem Zug mehr Informationen und kann mit Hilfe dieser
+Informationen die Positionen der gesuchten Sonden immer weiter
+einkreisen. 
+
+Der Spielzug 
+
+Ein Spielzug besteht darin, auf das Feld doppelt zu klicken, wo
+man eine Sonde vermutet. Ein Rettungsschiff wird an diese Stelle
+geschickt. Befindet sich an dieser Stelle eine der vermissten
+Sonden, so wird dies angezeigt. Befindet sich keine Sonde an
+dieser Stelle, so meldet das Rettungsschiff die Anzahl von
+Sonden zurck, die es von dieser Position aus sehen kann.  
+
+
+
+Rettungsschiff 
+
+Ein Rettungsschiff schickt man zu einem Punkt, indem man auf
+diesen doppelklickt. Findet das Rettungsschiff eine Sonde vor,
+so wird diese geborgen. Dies ben”tigt sehr wenig Zeit, sodass
+dafr kein Zug berechnet wird. Wird allerdings keine Sonde
+vorgefunden, so scannt das Rettungsschiff den gesammten
+Raumsektor (d.h. das Spielfeld) ab und meldet, wieviele Sonden
+es von diesem Ort aus gesehen hat. Dieser Vorgang gilt als Zug. 
+Um gute Kreuzpeilungen zu erm”glichen, gilt es zwei Regeln zu
+beachten: 1. Die Scanner k”nnen nur geradlinig auf den
+Hauptachsen nach Sonden suchen. Das bedeutet, dass nur die
+Sonden entdeckt werden, die sich genau in einer der acht in Fig.
+1 gezeigten Richtungen vom Rettungsschiff aus gesehen befinden.
+
+
+
+Fig.1 :  Scan-Richtungen der Rettungsschiffe
+
+2. Eine Sonde verdeckt alle anderen Sonden, die sich vom
+Rettungsschiff aus gesehen direkt hinter der Sonde befinden:
+
+
+
+	Im obigen Fall wrde das Rettungsschiff nur eine Sonde sehen,
+da die Erste die Sicht auf die Zweite versperrt. Die Anzahl
+gesehener Sonden wird automatisch auf dem Spielfeld eingetragen.
+
+Marken 
+
+Um die Verarbeitung der von den Rettungsschiffen bermittelten
+Daten zu veraeinfachen, kann man auf dem Spielfeld sog. Marken
+anbringen. Mit diesen Marken kann man Felder markieren, die auf
+keinen Fall eine Sonde enthalten k”nnen. So kann man zum
+Beispiel von einer Position aus, von der keine Sonden gesehen
+wurden, auf allen Hauptachsen Marken anbringen. Eine Marke wird
+angebracht, indem man auf die entsprechende Position im
+Spielfeld klickt. Genauso wird sie auch wieder entfernt. In der
+richtigen Verwendung von Marken liegt der Schlssel zu einem
+erfolgreichen Spiel. Das Anbringen oder Entfernen von Marken
+gilt nicht als Spielzug
+
+Andere Funktionen 
+
+Was sehe ich von hier? 
+
+Besonders Anf„nger haben manchmal Schwierigkeiten, zu
+berblicken, welche Felder von einer Position aus gesehen werden
+k”nnen. Ausserdem m”chte man auch schnell einmal berprfen, ob
+von einem besimmten Feld aus diese Position gesehen werden kann.
+ Diese Funktion erh„lt man, wenn man die Option-Taste (das ist
+die mit dem Schalter und dem Schriftzug 'alt') gedrckt h„lt und
+dann auf die entsprechende Position klickt. Alle Positionen und
+Verbindungen dorthin werden dann optisch hervorgehoben. Das
+Verwenden dieser Funktion z„hlt nicht als Zug.
+
+Mehrfache Markierungen 
+
+Sehr h„ufig ist es so, dass man nicht bloss ein Feld, sondern
+eine ganze Linie von Feldern markieren m”chte. Dies kann man
+dadurch erreichen, dass man das Startfeld klickt, die Maustaste
+gedrckt h„lt, den Cursor auf das Zielfeld bewegt und dann die
+Maustaste losl„sst. Alle Felder zwischen den beiden werden dann
+ebenfalls markiert. Zu bemerken ist, dass man nur Linien auf
+Hauptachsen von einem Feld aus markieren kann. Dies ist
+natrlich absichtlich so, damit man nicht aus Versehen eine
+Linie Markiert, die nicht auf der Hauptachse einer Position
+liegt.
+
+Ausblenden von Indikatoren 
+
+Im Verlauf des Spieles kann es vorkommen, dass man einen
+Indikator (also eine der Meldungen, wieviele Sonden von einer
+Position aus gesehen werden k”nnen) abgearbeitet hat und diesen
+nun nicht weiter beachten m”chte. Um einen solchen Indikator
+auszublenden, klickt man einfach in schneller Folge zweimal auf
+ihn. Um ihn wieder sichtbar zu machen, tut man das gleiche. Ein
+ausgeblendeter Indikator erscheint als weiss umrandetes
+schwarzes Rechteck.
+
+Diagonal Lines 
+
+Fr manche Spieler ist das normale Spielfeld, in dem zu jeder
+Position die Hauptachsen eingetragen sind, zu berfrachtet an
+Linien. Ersatzweise kann man zu einem anderen Spielfeld
+umschalten, auf dem nur die horizontalen und vertikalen
+Hauptachsen eingezeichnet sind.  Man schaltet zwischen den
+beiden Spielfeldern mit der Option 'Diagonal Lines' aus dem Men
+'Settings' aus. 
+
+Sound 
+
+Nicht jeder Spieler findet die Soundeffekte, die ich in das
+Spiel eingebaut habe so besonders gut. Um ihre Nerven zu
+schonen, kann man diese auch abschalten. Dies erreicht man durch
+die 'Sound'-Option im Men 'Settings'. Wem die Sounds absolut
+nicht gefallen, der kann das File 'Galaxis Sounds' aus dem
+Ordner entfernen, in dem sich Galaxis befindet. Von nun an
+werden keine Sounds mehr gespielt und die Sound-Option wird
+gesperrt.
+
+Frame Found 
+
+Im 'Settings'-Men befindet sich ausserdem eine Option 'Frame
+Found'. Diese ist fr diejenigen Spieler gedacht, deren
+Sehsch„rfe nach durchzechten/durchspielten N„chten langsam
+nachl„sst. Alle gefundenen Sonden werden, wenn diese Option
+gew„hlt ist, durch einen weissen Rand optisch hervorgehoben.
+
+LowScores l”schen 
+
+Galaxis speichert automatisch die besten (d.h. die kleinsten)
+Scores ab. Um diese Low-Score Liste zu l”schen, wirft man
+einfach das File 'Galaxis Scores' weg.
+
+Abspeichern 
+
+Wie bei fast jedem anderen Spiel auch, kann man ein gerade
+laufendes Spiel auf Diskette abspeichern um es sp„ter
+weiterzuspielen. Wie immer, ist dies die Option 'Save...' aus
+dem 'File'-Men
+
+Laden 
+
+Ist die Gegenfunktion zu Abspeichern. Mehr brauche ich wohl
+nicht zu sagen.
+
+Neues Spiel 
+
+Um ein neues Spiel anzufangen, die Option 'New Game...' aus dem
+Men 'File' ausw„hlen. Hier kann man auch festlegen, ob man
+gegen die Zeit spielen m”chte (s.u.). Die Minimaldauer eines
+Zuges betr„gt 10, die Maximaldauer 120 Sekunden. Einmal
+eingeschaltet kann man diese Option w„hrend Spiels nicht mehr
+ausschalten.
+
+Spiel Gegen die Zeit 
+
+Um das Spiel fr Veteranen etwas schwieriger zu machen, kann man
+ab Version 1.1.0 auch gegen die Zeit spielen. Hierbei ist jeder
+Zug auf eine maximale Zeit begrenzt, die man zu Anfang
+einstellen kann. Ist die Zeit abgelaufen, so wird der Zug als
+beendet betrachtet und ein neuer angefangen. Wenn die letzten
+fnf Sekunden angebrochen sind, ert”nt jede Sekunde ein
+Warnsignal, bis die Zeit abgelaufen ist. Die verbleibende Zeit
+wird immer rechts neben der Anzahl der noch vermissten
+Rettungskapseln angegeben.
+
+Netzwekspiel 
+
+In einer sp„teren Version dieses Spieles wird es m”glich sein,
+zu zweit Galaxis gegeneinander zu spielen. Die idee dabei ist
+es, dass man jeweils fr den anderen 4 Sonden versteckt und dann
+versucht, die Sonden des anderen m”glichst schnell zu finden. 
+Wenn die Response auf dieses Spiel gross genug ist, werde ich
+auch dies implementieren. 
+
+Tutorial Game 
+
+Um den Einstieg in Galaxis zu erleichtern, habe ich  ein
+'Tutorial Game' beigefgt. Dies ist in wirklichkeit nichts
+weiter als ein Spiel, das ich abgespeichert habe und nun
+garantiert fr alle die gleichen Voraussetzungen liefert.
+
+Wollen wir nun mit dem Tutorial Game beginnen: Um eine
+eindeutige Identifizierungen zu erm”glichen, will ich die
+einzelnen Spielfeldpositionen numerieren, und zwar horizontal
+mit den Buchstaben A bis T und vertikal mit den Ziffern 1 bis 9.
+ Wenn ich jetzt einen Spielzug 'I-6:2' angebe, dann meine ich,
+dass auf das entsprechende Feld I-6 doppelgeklickt wurde. Das
+Ergebnis war, dass an diesem Feld sich keine Sonde befand,
+sondern 2 Sonden von hier aus gesehen wurden. Wir wollen diesen
+Zug nun durchfhren. Das Ergebnis sieht ungef„hr so aus:
+
+ Wir wollen nun in rascher Folge drei weitere Zge ausfhren:
+A-1:1 T-1:1  A-9:0 Der letzte Zug bedarf gewisser
+Nachbearbeitung: Da von A-9 aus auf den Hauptachsen keine Sonden
+gesehen werden, kann man alle von A-9 aus gesehenen Positionen
+mit Marken versehen. Um herauszufinden, welche Felder alle von
+A-9 aus gesehen werden, einfach auf A-9 option-klicken. Nachdem
+alle Felder von A-9 aus markiert wurden, sollte das Spielfeld
+ungef„hr so aussehen:
+
+ Anstelle alle Marken mit der Hand in die einzelnen Positionen
+einzutragen, ist es sehr viel gnstiger, die
+Shift-Click-And-Drag Funktion fr das Markieren einer grossen
+Anzahl von Positionen zu verwenden.
+
+So, in diesem Stil geht es weiter, bis alle Sonden gefunden
+sind. Sollte die Anzahl verwendeter Zge klein genug sein, wird
+man in die LowScore-Liste aufgenommen. 
+
+Noch ein Wort zu den Marken: Nicht nur, wenn eine '0' gesehen
+wird, kann man Marken setzen, sondern natrlich auch dann, wenn
+auf einer Position aus bestimmten logischen Grnden sich keine
+Sonde befinden kann. 
+
+XMasWare - Was ist das? 
+
+Dieses Programm wurde als Weihnachtsgeschenk '91 fr meine
+Freundin Barbara Wedekind geschrieben. Wenn Ihr es spielt oder
+sogar gut findet, dann wrde ich mich freuen, wenn Ihr eine
+Postkarte an 
+
+
+
+Barbara Wedekind
+
+Friedensallee 73
+
+D-2000 Hamburg 50
+
+	(West) Germany
+
+ schickt. Ich habe mir viel Mhe mit diesem Programm gegeben und
+darin viel Zeit investiert und hoffe, dass es Euch die paar
+Minuten fr eine Postkarte wert ist. Ihr wrdet mir einen
+grossen Gefallen tun.
+
+Copyright c 1991, 92 by Christian Franz. 
+
+Notice:
+
+Dieses Programm darf beliebig weitergegeben werden, sofern die
+folgenden Punkte eingehalten werden:
+
+- 	Dieser Text und die englische Version sowie das Programm und
+die dazugeh”rigen Dateien drfen nicht ver„ndert werden und
+mssen gemeinsam verteilt werden.
+
+-	Fr das Programm und die dazugeh”rigen Dateien sowie die Texte
+darf keine Bezahlung verlangt werden ausser den blichen On-Line
+Gebren in kommerziellen Bulletin Board Systems (BBS).
+
+Bug-Reports und Verbesserungsvorschl„ge 
+
+Kein Programm ist perfekt. Wenn Ihr Verbesserungsvorschl„ge
+und/oder Bug-Reports habt, dann schickt sie an
+cfranz@iiic.ethz.ch.
+
+Wer kein Internet/email Zugang hat, kann mir auch Post an
+folgende Adresse schicken:
+
+		Christian Franz
+
+	Sonneggstrasse 61
+
+	CH 8006 Zrich
+
+ Zrich, im Oktober 1992
+
+ Music 
+
+Seit Version 1.1 spielt im Hintergrund das 'Galaxis Thema' (in
+Wirklichkeit handelt es sich um den Song 'True Faith' von der
+Gruppe Depeche Mode). Wen dies st”rt, der kann die
+Hintergrundmusik mittels dieser Option im 'Settings'-Men
+abschalten. N„here Informationen, wie die Hintergrundmusik
+realisiert wurde steht am Ende dieses Dokuments.Die
+Hintergrundmusik Die Hintergrundmusik wurde mittels der
+phantastischen 'Sound Trecker Driver' von Frank Seide
+realisiert. Diese Driver erm”glichen einem Programmierer, sehr
+einfach im Hintergrund Musikstcke im 'MOD' (ein Standard)
+Format abzuspielen.
+
+Wer also andere Hintergrundmusik haben m”chte als die
+mitgelieferte, besorge sich das entsprechende MOD-File, nenne es
+'Galaxis Theme' und werfe es in den Galaxis Folder. Es wird dann
+automatisch gespielt.
+
+Fr n„here Informationen ber den Sound Trecker oder die Sound
+Trecker Driver, wende man sich an 
+
+		Frank Seide
+
+	Koolbarg 39d
+
+	D 2000 Hamburg 74
+
+		Deutschland
+
+Die beiden Resourcen PSyn 128 und STrI 128 sind Copyright c 1992
+by Frank Seide.  Macs, die nicht ber mindestens einen 68020
+Prozessor verfgen, k”nnen keine Hintergrundmusik laufen lassen.
+In diesem Fall kann der Menpunkt 'Music' nicht angew„hlt werden.
+
+Voreinstellungen 
+
+Anstelle fr jedes Spiel im 'Settings'-Men Einstellungen
+vorzunehmen, kann man mittels der 'Preferences...' Option im
+'File' Men Einstellungen auf Disk abspeichern, die dann
+automatisch beim Start von Galaxis geladen werden.  Da Galaxis
+versucht, die Einstellungen abzuspeichern, darf es weder
+geschtzt sein, noch sich auf einer Schreibgeschtzten Disk
+befinden. 
+
+

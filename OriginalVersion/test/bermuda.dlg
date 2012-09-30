@@ -1,0 +1,97 @@
+DLGINCLUDE 1 "E:\arbeit\PROGR\Bermuda_Triangle\defs.h"
+
+DLGTEMPLATE IDR_HIGHSCOREDLG LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Highscores", IDR_HIGHSCOREDLG, 105, 13, 173, 123, WS_VISIBLE, 
+            FCF_SYSMENU | FCF_TITLEBAR
+    BEGIN
+        LTEXT           "You made it into the Highscore list", -1, 11, 107, 
+                        153, 8
+        LTEXT           "Please enter your name:", -1, 11, 51, 115, 8
+        ENTRYFIELD      "", ID_NAME, 13, 34, 105, 8, ES_MARGIN
+        DEFPUSHBUTTON   "~Ok", DID_OK, 11, 10, 40, 14
+        LTEXT           "with the incredible number of", -1, 21, 95, 134, 8
+        LTEXT           "10", IDR_SCORENUMBER, 77, 83, 26, 8
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00FF0000L
+        LTEXT           "moves!", -1, 67, 71, 44, 8
+    END
+END
+
+DLGTEMPLATE IDR_SHOWHIGHDLG LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Highscores", IDR_SHOWHIGHDLG, 17, -12, 207, 151, WS_VISIBLE, 
+            FCF_SYSMENU | FCF_TITLEBAR
+    BEGIN
+        LTEXT           "1.", -1, 15, 136, 15, 8
+        LTEXT           "2.", -1, 15, 124, 15, 8
+        LTEXT           "3.", -1, 15, 112, 15, 8
+        LTEXT           "4.", -1, 15, 100, 15, 8
+        LTEXT           "5.", -1, 15, 88, 15, 8
+        LTEXT           "6.", -1, 15, 76, 15, 8
+        LTEXT           "7.", -1, 15, 64, 15, 8
+        LTEXT           "8.", -1, 15, 52, 15, 8
+        LTEXT           "9.", -1, 15, 40, 15, 8
+        LTEXT           "10.", -1, 15, 28, 15, 8
+        LTEXT           "Text", IDR_HIGHNAME1, 29, 136, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME2, 29, 124, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME3, 29, 112, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME4, 29, 100, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME5, 29, 88, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME6, 29, 76, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME7, 29, 64, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME8, 29, 52, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME9, 29, 40, 128, 8
+        LTEXT           "Text", IDR_HIGHNAME10, 29, 28, 128, 8
+        LTEXT           "Text", IDR_HIGHSCORE1, 164, 136, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE2, 164, 124, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE3, 164, 112, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE4, 164, 100, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE5, 164, 88, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE6, 164, 76, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE7, 164, 64, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE8, 164, 52, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE9, 164, 40, 20, 8
+        LTEXT           "Text", IDR_HIGHSCORE10, 164, 28, 20, 8
+        DEFPUSHBUTTON   "~Ok", DID_OK, 8, 6, 40, 14
+        PUSHBUTTON      "Cl~ear", IDR_HIGHCLEAR, 58, 6, 40, 14
+    END
+END
+
+DLGTEMPLATE IDR_PRODINFODLG LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Product information", IDR_PRODINFODLG, 94, 13, 183, 127, 
+            WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+    BEGIN
+        LTEXT           "Bermuda Triangle Ship Rescue", -1, 16, 106, 146, 15
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00FF0000L
+                        PRESPARAMS PP_FONTNAMESIZE, "14.Tms Rmn Italic"
+        LTEXT           "(C) 1995 N & O Design", -1, 39, 77, 102, 8
+        LTEXT           "Nicole Greiber", -1, 55, 88, 73, 8
+        DEFPUSHBUTTON   "~Ok", DID_OK, 15, 7, 40, 14
+        LTEXT           "by", -1, 79, 97, 22, 8
+        LTEXT           "The idea of this game is", -1, 34, 63, 112, 8
+        LTEXT           "a Mac game by Christian Franz", -1, 20, 45, 142, 8
+        LTEXT           "shamelessly copied from ""Galaxis"",", -1, 12, 54, 
+                        156, 8
+        LTEXT           "This program is FREE!ware", -1, 29, 28, 122, 8
+        ICON            IDR_MAIN, IDR_ICON, 9, 87, 20, 16, WS_GROUP
+    END
+END
+
+DLGTEMPLATE IDR_GAMESETTINGSDLG LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Game settings", IDR_GAMESETTINGSDLG, 102, 18, 159, 106, 
+            WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+    BEGIN
+        AUTOCHECKBOX    "~Sound", IDC_SOUND, 14, 28, 48, 10
+        AUTORADIOBUTTON "Show ~diagonal lines", IDC_DIAGONALS, 26, 72, 101, 
+                        10, WS_TABSTOP
+        AUTORADIOBUTTON "Show s~traight lines", IDC_VERTICALS, 26, 62, 99, 
+                        10, WS_TABSTOP
+        AUTORADIOBUTTON "Show ~all lines", IDC_DIAGONALS_AND_VERTICALS, 26, 
+                        52, 78, 10, WS_TABSTOP
+        GROUPBOX        "Line Drawing Options", -1, 13, 47, 132, 46
+        DEFPUSHBUTTON   "~Ok", DID_OK, 14, 5, 40, 14
+        PUSHBUTTON      "Cancel", DID_CANCEL, 60, 5, 40, 14
+    END
+END
